@@ -1,0 +1,10 @@
+#!/bin/sh
+
+test -x /usr/share/lighttpd/create-log-config -a /etc/sysconfig/lighttpd -nt /etc/lighttpd/env/LOGNUM && \
+    /usr/share/lighttpd/create-log-config
+
+exec envdir ../env sh -c '
+    cd /var/log/www/lighttpd/server
+    exec setuidgid ${LOGUSER:-nobody} \
+	multilog ${LOGSIZE+"s$LOGSIZE"} ${LOGNUM+"n$LOGNUM"} .
+'

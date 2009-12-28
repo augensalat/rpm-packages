@@ -1,0 +1,10 @@
+--- src/mod_proxy.c
++++ src/mod_proxy.c
+@@ -443,6 +443,7 @@
+ 	if (con->request.http_host &&
+ 	    !buffer_is_empty(con->request.http_host)) {
+ 		proxy_set_header(con, "X-Host", con->request.http_host->ptr);
++		proxy_set_header(con, "X-Forwarded-Host", con->request.http_host->ptr);
+ 	}
+ 	proxy_set_header(con, "X-Forwarded-Proto", con->conf.is_ssl ? "https" : "http");
+ 

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+exec 2>&1
+
+test -x /usr/share/lighttpd/create-config -a /etc/sysconfig/lighttpd -nt /etc/lighttpd/lighttpd.conf && \
+    /usr/share/lighttpd/create-config
+
+exec envdir ./env sh -c '
+    softlimit=${LIMIT:+"softlimit -d $LIMIT"}
+    cd /var/tmp
+    exec \
+	$softlimit \
+	lighttpd -D -f "${CONF:-/etc/lighttpd/lighttpd.conf}"
+'
