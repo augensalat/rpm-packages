@@ -1,0 +1,8 @@
+## Name: twoftpd
+## Description: Open the ftp port for twoftpd.
+
+# space separated list of allowed TCP ports
+TCP="ftp ftp-data"
+
+# space separated list of allowed UDP ports
+UDP="ftp-data"

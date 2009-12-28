@@ -1,0 +1,4 @@
+/var/run/cvm-qmail
+#
+# Filename of unix domain socket for cvm-qmail-local.
+#

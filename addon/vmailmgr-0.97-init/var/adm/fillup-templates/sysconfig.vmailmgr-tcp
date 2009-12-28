@@ -1,0 +1,71 @@
+## Type:        string
+## Default:     ""
+#
+# Local hostname to keep tcpserver from looking it up with DNS.
+# Default is "", which means to use /etc/qmail/control/me
+#
+VMAILMGRTCP_LOCALNAME=""
+
+## Type:        string
+## Default:     ""
+#
+# IP address the vmailmgr daemon should bind to on this host.
+# Default is "", which means to listen on all addresses of this host.
+#
+VMAILMGRTCP_ADDRESS=""
+
+## Type:        string
+## Default:     "322"
+#
+# Port number for the vmailmgr daemon.
+#
+VMAILMGRTCP_PORT="322"
+
+## Type:        integer
+## Default:     20
+#
+# Maximum number of simultaneous vmailmgr daemon processes.
+#
+VMAILMGRTCP_CONCURRENCY="20"
+
+## Type:        string
+## Default:     ""
+#
+# tcprules(1) file for restricting tcp access to certain hosts
+#
+VMAILMGRTCP_TCPRULES=""
+
+## Type:        integer
+## Default:     10000000
+#
+# Limit data segment size of vmailmgrd on a tcp socket.
+#
+VMAILMGRTCP_LIMITDATA="10000000"
+
+## Type:        integer
+## Default:     0
+#
+# Limit the CPU time in seconds for vmailmgrd on a tcp socket.
+# The default of "0" means no cpu limit.
+#
+VMAILMGRTCP_LIMITCPU="0"
+
+## Type:        integer
+## Default:     99999
+#
+# sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+VMAILMGRTCP_LOGSIZE="99999"
+
+## Type:	integer
+## Default:	10
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+VMAILMGRTCP_LOGNUM="10"

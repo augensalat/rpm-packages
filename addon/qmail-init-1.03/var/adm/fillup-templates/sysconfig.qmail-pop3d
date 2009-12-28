@@ -1,0 +1,86 @@
+## Type:        ip
+## Default:     ""
+## Command:	svc -t /service/qmail-pop3d
+#
+# IP address the POP3 daemon should bind to on this host.
+# Default is "", which means to listen on all addresses of this host.
+#
+POP3_ADDRESS=""
+
+## Type:        string
+## Default:     "110"
+## Command:	svc -t /service/qmail-pop3d
+#
+# Port number or name (from /etc/services) for the pop3 daemon.
+#
+POP3_PORT="110"
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/qmail-pop3d
+#
+# Set local hostname to keep tcpserver from looking it up in DNS.
+# Default is "", which means using the result of "hostname -f".
+# A common choice for localname is 0. To avoid loops, you must use this
+# option for servers on TCP port 53.
+#
+POP3_LOCALNAME=""
+
+## Type:        integer
+## Default:     20
+## Command:	svc -t /service/qmail-pop3d
+#
+# Maximum number of simultaneous pop3 daemon processes.
+#
+POP3_CONCURRENCY="20"
+
+## Type:        integer
+## Default:     10000000
+## Command:	svc -t /service/qmail-pop3d
+#
+# Memory limit in bytes for daemon.
+# Important: You probably want to raise this limit significantly if you
+#            have an SSL enabled tcpserver!
+#
+POP3_LIMIT="10000000"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail-pop3d
+#
+# Programm for authentication and environment setting.
+#
+POP3_CHECKPASSWORD="checkpassword"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail-pop3d
+#
+# List of IP numbers or IP number ranges of hosts that can connect to our
+# POP3 daemon.
+# Examples for IP ranges: "192.168. 213.191.36.100-120 10.0.0-63."
+#
+POP3_ALLOWFROMIP=""
+
+## Type:        integer
+## Default:     99999
+## Command:	svc -t /service/qmail-pop3d/log
+#
+# sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+POP3_LOGSIZE="99999"
+
+## Type:	integer
+## Default:	10
+## Command:	svc -t /service/qmail-pop3d/log
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+POP3_LOGNUM="10"
+

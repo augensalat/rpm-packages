@@ -1,0 +1,442 @@
+Index: pop3-cmd.c
+===================================================================
+--- pop3-cmd.c	(revision 0)
++++ pop3-cmd.c	(revision 6)
+@@ -0,0 +1,30 @@
++/* pop3-cmd.c -- POP3 commands used by pop3front-auth and pop3front-maildir
++ */
++#include <stdlib.h>
++#include <unistd.h>
++#include <iobuf/iobuf.h>
++#include <str/str.h>
++#include <cvm/sasl.h>
++#include "pop3.h"
++
++void cmd_capa(void)
++{
++  static str auth_resp;
++  int sasl;
++
++  if ((sasl = sasl_auth_caps(&auth_resp)) == -1 || sasl == 1 && auth_resp.len <= 5) {
++    respond(err_internal);
++    return;
++  }
++  respond(ok);
++  obuf_puts(&outbuf, "TOP" CRLF);
++  obuf_puts(&outbuf, "USER" CRLF);
++  if (sasl) {
++    obuf_puts(&outbuf, "SASL ");
++    obuf_write(&outbuf, auth_resp.s + 5, auth_resp.len - 5);
++    obuf_puts(&outbuf, CRLF);
++  }
++  obuf_puts(&outbuf, "PIPELINING" CRLF);
++  obuf_puts(&outbuf, "UIDL" CRLF);
++  respond(".");
++}
+Index: smtpfront-qmail.sh
+===================================================================
+--- smtpfront-qmail.sh	(revision 1)
++++ smtpfront-qmail.sh	(working copy)
+@@ -1 +1 @@
+-exec "$(dirname $0)"/mailfront smtp qmail check-fqdn counters mailrules relayclient cvm-validate qmail-validate add-received patterns accept-sender "$@"
++exec "$(dirname $0)"/mailfront smtp qmail check-fqdn counters mailrules relayclient qmail-validate cvm-validate add-received patterns accept-sender "$@"
+Index: pop3.h
+===================================================================
+--- pop3.h	(revision 1)
++++ pop3.h	(working copy)
+@@ -19,6 +19,7 @@
+ extern const char err_syntax[];
+ extern void log(const char* msg);
+ extern void respond(const char*);
++extern void cmd_capa(void);
+ 
+ extern command commands[];
+ extern int startup(int argc, char* argv[]);
+Index: TARGETS
+===================================================================
+--- TARGETS	(revision 1)
++++ TARGETS	(working copy)
+@@ -33,6 +33,7 @@
+ plugin-reject.so
+ plugin-relayclient.so
+ plugin-require-auth.so
++pop3-cmd.o
+ pop3-mainloop.o
+ pop3-response.o
+ pop3.a
+Index: pop3front-auth.c
+===================================================================
+--- pop3front-auth.c	(revision 1)
++++ pop3front-auth.c	(working copy)
+@@ -53,8 +53,45 @@
+   _exit(1);
+ }
+ 
+-static void cmd_auth(const str* s)
++static void cmd_auth(void)
+ {
++  static str auth_resp;
++  int l;
++
++  switch (sasl_auth_caps(&auth_resp)) {
++  case 0:
++    respond("-ERR Unknown AUTHORIZING state command");
++    return;
++  case 1:
++    if (auth_resp.len <= 5) {
++      respond(err_internal);
++      return;
++    }
++    respond(ok);
++    str_lcut(&auth_resp, 5);
++    for (;;) {
++      str_lstrip(&auth_resp);
++      if ((l = str_findfirst(&auth_resp, ' ')) == -1) {
++	if (&auth_resp.len) {
++	  obuf_putstr(&outbuf, &auth_resp);
++	  obuf_puts(&outbuf, CRLF);
++	}
++	break;
++      }
++      obuf_write(&outbuf, auth_resp.s, l);
++      obuf_puts(&outbuf, CRLF);
++      str_lcut(&auth_resp, l + 1);
++    }
++    break;
++  default:
++    respond(err_internal);
++    return;
++  }
++  respond(".");
++}
++
++static void cmd_auth_one(const str* s)
++{
+   int i;
+   if ((i = sasl_auth1(&saslauth, s)) == 0) 
+     do_exec();
+@@ -93,7 +130,8 @@
+ }
+ 
+ command commands[] = {
+-  { "AUTH", 0,        cmd_auth, 0 },
++  { "CAPA", cmd_capa, 0,        0 },
++  { "AUTH", cmd_auth, cmd_auth_one, 0 },
+   { "PASS", 0,        cmd_pass, "PASS XXXXXXXX" },
+   { "QUIT", cmd_quit, 0,        0 },
+   { "USER", 0,        cmd_user, 0 },
+Index: Makefile
+===================================================================
+--- Makefile	(revision 1)
++++ Makefile	(working copy)
+@@ -144,14 +144,17 @@
+ plugin-require-auth.so: makeso plugin-require-auth.c mailfront.h responses.h constants.h
+ 	./makeso plugin-require-auth.c   
+ 
++pop3-cmd.o: compile pop3-cmd.c pop3.h constants.h
++	./compile pop3-cmd.c
++
+ pop3-mainloop.o: compile pop3-mainloop.c pop3.h constants.h
+ 	./compile pop3-mainloop.c
+ 
+ pop3-response.o: compile pop3-response.c pop3.h constants.h
+ 	./compile pop3-response.c
+ 
+-pop3.a: makelib iobytes.o timeout.o pop3-mainloop.o pop3-response.o
+-	./makelib pop3.a iobytes.o timeout.o pop3-mainloop.o pop3-response.o
++pop3.a: makelib iobytes.o timeout.o pop3-cmd.o pop3-mainloop.o pop3-response.o
++	./makelib pop3.a iobytes.o timeout.o pop3-cmd.o pop3-mainloop.o pop3-response.o
+ 
+ pop3front-auth: pop3front-auth.o load pop3.a socket.lib
+ 	./load pop3front-auth pop3.a -lcvm-sasl -lcvm-v2client -lbg `cat socket.lib`
+@@ -160,7 +163,7 @@
+ 	./compile pop3front-auth.c
+ 
+ pop3front-maildir: pop3front-maildir.o load pop3.a
+-	./load pop3front-maildir pop3.a -lbg 
++	./load pop3front-maildir pop3.a -lcvm-sasl -lcvm-v2client -lbg 
+ 
+ pop3front-maildir.o: compile pop3front-maildir.c pop3.h constants.h
+ 	./compile pop3front-maildir.c
+Index: plugin-cvm-validate.c
+===================================================================
+--- plugin-cvm-validate.c	(revision 1)
++++ plugin-cvm-validate.c	(working copy)
+@@ -6,22 +6,35 @@
+ 
+ static const char* lookup_secret;
+ static const char* cvm_lookup;
++static int cred_count;
+ 
+ static RESPONSE(norcpt,553,"5.1.1 Sorry, that recipient does not exist.");
+ static RESPONSE(failed,451,"4.1.0 Sorry, I could not verify that recipient (internal temporary error).");
+ 
+ static const response* validate_init(void)
+ {
+-  cvm_lookup = getenv("CVM_LOOKUP");
+-  if ((lookup_secret = getenv("CVM_LOOKUP_SECRET")) == 0)
+-    lookup_secret = getenv("LOOKUP_SECRET");
+-  /* Match the behavior of the current CVM code base: If
+-   * $CVM_LOOKUP_SECRET is set to an empty string, treat it as if no
+-   * lookup secret is required.  (If $CVM_LOOKUP_SECRET is unset, the
+-   * module will not operate in lookup mode).
+-   */
+-  if (lookup_secret != 0 && *lookup_secret == 0)
+-    lookup_secret = 0;
++  if ((cvm_lookup = getenv("CVM_LOOKUP")) != 0) {
++
++    if ((lookup_secret = getenv("CVM_LOOKUP_SECRET")) == 0)
++      lookup_secret = getenv("LOOKUP_SECRET");
++
++    /* Invoking CVMs in cvm-command mode without $CVM_LOOKUP_SECRET set
++     * will fail, since the CVM will be expecting additional credentials
++     * to validate.  To prevent this failure, set $CVM_LOOKUP_SECRET to
++     * an empty string. */
++    if (lookup_secret == 0) {
++      if (putenv("CVM_LOOKUP_SECRET=") != 0)
++       return &resp_oom;
++      /* Also set the lookup secret to an empty string internally to
++       * avoid NULL pointer issues later. */
++      lookup_secret = "";
++    }
++
++    /* Match the behavior of the current CVM code base: If
++     * $CVM_LOOKUP_SECRET is set to an empty string, treat it as if no
++     * lookup secret is required. */
++    cred_count = (*lookup_secret == 0) ? 2 : 3;
++  }
+   return 0;
+ }
+ 
+@@ -30,8 +43,11 @@
+   struct cvm_credential creds[3];
+   unsigned i;
+   const response* r = &resp_failed;
++  unsigned long rcptok = 0;
+ 
+   if (cvm_lookup == 0) return 0;
++  if (session_getnum("relayclient", 0)) return 0;
++  if (session_hasnum("rcptok", &rcptok) && !rcptok) return 0;
+   if ((i = str_findlast(recipient, '@')) == (unsigned)-1)
+     return 0;
+   memset(creds, 0, sizeof creds);
+@@ -41,8 +57,11 @@
+   if (str_copyb(&creds[0].value, recipient->s, i)
+       && str_copyb(&creds[1].value, recipient->s+i+1, recipient->len-i-1)
+       && str_copys(&creds[2].value, lookup_secret)) {
+-    switch (cvm_authenticate(cvm_lookup, 3, creds)) {
+-    case 0: r = 0; break;
++    switch (cvm_authenticate(cvm_lookup, cred_count, creds)) {
++    case 0:
++       session_setnum("rcptok", 1);
++       r = 0;
++       break;
+     case CVME_PERMFAIL: r = &resp_norcpt;
+     }
+   }
+Index: pop3front-maildir.c
+===================================================================
+--- pop3front-maildir.c	(revision 1)
++++ pop3front-maildir.c	(working copy)
+@@ -397,6 +397,7 @@
+ }
+ 
+ command commands[] = {
++  { "CAPA", cmd_capa, 0,            0 },
+   { "DELE", 0,        cmd_dele,     0 },
+   { "LAST", cmd_last, 0,            0 },
+   { "LIST", cmd_list, cmd_list_one, 0 },
+Index: mailfront.html
+===================================================================
+--- mailfront.html	(revision 1)
++++ mailfront.html	(working copy)
+@@ -52,7 +52,7 @@
+ <p>A configuration that would match previous installations of mailfront
+ using the qmail backend would use the following list of plugins:</p>
+ 
+-<pre>check-fqdn:counters:mailrules:relayclient:cvm-validate:qmail-validate:add-received:patterns:accept-sender</pre>
++<pre>check-fqdn:counters:mailrules:relayclient:qmail-validate:cvm-validate:add-received:patterns:accept-sender</pre>
+ 
+ <p>The included <tt>*front-qmail</tt> shell script wrappers for the
+ <tt>mailfront</tt> program are preconfigured to load the above list of
+Index: qmqpfront-qmail.sh
+===================================================================
+--- qmqpfront-qmail.sh	(revision 1)
++++ qmqpfront-qmail.sh	(working copy)
+@@ -1 +1 @@
+-exec "$(dirname $0)"/mailfront qmqp qmail check-fqdn counters mailrules relayclient cvm-validate qmail-validate add-received patterns accept-sender "$@"
++exec "$(dirname $0)"/mailfront qmqp qmail check-fqdn counters mailrules relayclient qmail-validate cvm-validate add-received patterns accept-sender "$@"
+Index: imapfront-auth.c
+===================================================================
+--- imapfront-auth.c	(revision 1)
++++ imapfront-auth.c	(working copy)
+@@ -223,11 +223,40 @@
+   exit(0);
+ }
+ 
++int have_starttls(void)
++{
++  const char *p;
++
++  if ((p = getenv("IMAP_STARTTLS")) == 0) return 0;
++  if (*p != 'y' && *p != 'Y') return 0;
++
++  p = getenv("COURIERTLS");
++  if (!p || !*p) return 0;
++  return(!access(p, X_OK));
++}
++
+ void cmd_capability(void)
+ {
++  const char *p;
++
+   respond_start(NOTAG);
+   respond_str("CAPABILITY IMAP4rev1 ");
+   respond_str(capability);
++  if ((p = getenv("IMAP_ACL")) && atoi(p))
++    respond_str(" ACL ACL2=UNION");
++/*
++  if (have_starttls()) {
++    respond_str(" STARTTLS");
++    if ((p = getenv("IMAP_TLS_REQUIRED")) && atoi(p))
++      respond_str(" LOGINDISABLED");
++  }
++ */
++  if ((p = getenv("OUTBOX")) && *p) {
++    respond_str(" XCOURIEROUTBOX=INBOX");
++    respond_str(p);
++  }
++  if ((p = getenv("IMAP_MOVE_EXPUNGE_TO_TRASH")) && atoi(p))
++    respond_str(" XMAGICTRASH");
+   respond_end();
+   respond(0, "OK CAPABILITY completed");
+ }
+Index: plugin-relayclient.c
+===================================================================
+--- plugin-relayclient.c	(revision 1)
++++ plugin-relayclient.c	(working copy)
+@@ -8,10 +8,10 @@
+   const char* relayclient = session_getenv("RELAYCLIENT");
+   if (relayclient != 0) {
+     str_cats(recipient, relayclient);
+-    return &resp_ok;
++    session_setnum("relayclient", 1);
+   }
+   else if (session_getnum("authenticated", 0))
+-    return &resp_ok;
++    session_setnum("relayclient", 1);
+   return 0;
+ }
+ 
+Index: qmtpfront-qmail.sh
+===================================================================
+--- qmtpfront-qmail.sh	(revision 1)
++++ qmtpfront-qmail.sh	(working copy)
+@@ -1 +1 @@
+-exec "$(dirname $0)"/mailfront qmtp qmail check-fqdn counters mailrules relayclient cvm-validate qmail-validate add-received patterns accept-sender "$@"
++exec "$(dirname $0)"/mailfront qmtp qmail check-fqdn counters mailrules relayclient qmail-validate cvm-validate add-received patterns accept-sender "$@"
+Index: SRCFILES
+===================================================================
+--- SRCFILES	(revision 1)
++++ SRCFILES	(working copy)
+@@ -24,6 +24,7 @@
+ plugin-reject.c
+ plugin-relayclient.c
+ plugin-require-auth.c
++pop3-cmd.c
+ pop3-mainloop.c
+ pop3-response.c
+ pop3.h
+Index: FILES
+===================================================================
+--- FILES	(revision 1)
++++ FILES	(working copy)
+@@ -70,6 +70,7 @@
+ plugin-require-auth.html
+ plugin-template.c
+ plugin-template.html
++pop3-cmd.c
+ pop3-mainloop.c
+ pop3-response.c
+ pop3.h
+Index: plugin-qmail-validate.c
+===================================================================
+--- plugin-qmail-validate.c	(revision 1)
++++ plugin-qmail-validate.c	(working copy)
+@@ -10,6 +10,7 @@
+ static RESPONSE(no_chdir,451,"4.3.0 Could not change to the qmail directory.");
+ static RESPONSE(badmailfrom,553,"5.1.0 Sorry, your envelope sender is in my badmailfrom list.");
+ static RESPONSE(bmt,553,"5.1.1 Sorry, that address is in my badrcptto list.");
++static RESPONSE(not_rh,553,"5.7.1 Sorry, that domain isn't in my list of allowed rcpthosts.");
+ 
+ static dict bmf;
+ static dict rh;
+@@ -59,31 +60,37 @@
+ static const response* validate_recipient(str* recipient)
+ {
+   int at;
++  unsigned long rcptok = 0;
+ 
+   str_copy(&tmp, recipient);
+   str_lower(&tmp);
+   if (dict_get(&brt, &tmp) != 0)
+     return &resp_bmt;
+-  if ((at = str_findlast(recipient, '@')) > 0) {
+-    str_copyb(&tmp, recipient->s + at, recipient->len - at);
+-    str_lower(&tmp);
+-    if (dict_get(&brt, &tmp))
+-      return &resp_bmt;
+-    ++at;
+-    str_copyb(&tmp, recipient->s + at, recipient->len - at);
+-    str_lower(&tmp);
+-    for (;;) {
+-      if (dict_get(&rh, &tmp))
+-	return &resp_accept;
+-      /* NOTE: qmail-newmrh automatically lowercases the keys in this CDB */
+-      if (mrh_fd != -1 && cdb_find(&mrh, tmp.s, tmp.len) == 1)
+-	return &resp_accept;
+-      if ((at = str_findnext(&tmp, '.', 1)) <= 0)
+-	break;
+-      str_lcut(&tmp, at);
++  if ((at = str_findlast(recipient, '@')) <= 0) return 0;
++  str_copyb(&tmp, recipient->s + at, recipient->len - at);
++  str_lower(&tmp);
++  if (dict_get(&brt, &tmp))
++    return &resp_bmt;
++  if (session_getnum("relayclient", 0)) return 0;
++  if (session_hasnum("rcptok", &rcptok) && !rcptok) return 0;
++  ++at;
++  str_copyb(&tmp, recipient->s + at, recipient->len - at);
++  str_lower(&tmp);
++  for (;;) {
++    if (dict_get(&rh, &tmp)) {
++      session_setnum("rcptok", 1);
++      return 0;
+     }
++    /* NOTE: qmail-newmrh automatically lowercases the keys in this CDB */
++    if (mrh_fd != -1 && cdb_find(&mrh, tmp.s, tmp.len) == 1) {
++      session_setnum("rcptok", 1);
++      return 0;
++    }
++    if ((at = str_findnext(&tmp, '.', 1)) <= 0)
++      break;
++    str_lcut(&tmp, at);
+   }
+-  return 0;
++  return &resp_not_rh;
+ }
+ 
+ struct plugin plugin = {
+Index: mailfront.c
+===================================================================
+--- mailfront.c	(revision 1)
++++ mailfront.c	(working copy)
+@@ -97,7 +97,7 @@
+   const response* resp = 0;
+   const response* hresp = 0;
+   MODULE_CALL(recipient, (recip), 1, 0);
+-  if (resp == 0)
++  if (resp == 0 && !(session_getnum("relayclient", 0) || session_getnum("rcptok", 0)))
+     return &resp_no_rcpt;
+   if (session.backend->recipient != 0)
+     if (!response_ok(hresp = session.backend->recipient(recip)))

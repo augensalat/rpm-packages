@@ -1,0 +1,4 @@
+IMAP4rev1 CHILDREN NAMESPACE THREAD=ORDEREDSUBJECT THREAD=REFERENCES SORT QUOTA
+
+# Otherwise, leave it set to the default value.  The IDLE keyword can also
+# be added, in experimental mode.

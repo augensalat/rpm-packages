@@ -1,0 +1,7 @@
+# Lines from this file are included in the resulting cdb file below all
+# local IPs and below those IP numbers, that are defined in
+# /etc/sysconfig/mailfront in variable QMQP_RELAYFROMIP.
+# Main use is for more sophisticated tcprules to set certain environment
+# variables if connected from selected IP addresses.
+# All lines not starting with a number are ignored.
+#

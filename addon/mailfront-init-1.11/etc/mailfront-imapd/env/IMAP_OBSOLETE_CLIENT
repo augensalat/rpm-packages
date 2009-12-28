@@ -1,0 +1,4 @@
+0
+
+# Set IMAP_OBSOLETE_CLIENT if your IMAP client expects \\NoInferiors to mean
+# what \\HasNoChildren really means.

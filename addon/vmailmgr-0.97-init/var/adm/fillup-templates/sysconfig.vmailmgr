@@ -1,0 +1,141 @@
+## Path:        Network/Mail/vmailmgr
+## Description: Basic configuration of the Virtual Mail Manager VMailMgr
+## Type:        yesno
+## Default:     "yes"
+#
+# Enable SuSEconfig.vmailmgr
+#
+# Some people don't want SuSEconfig to modify the system. With this
+# entry you can specifically disable the vmailmgr module of SuSEconfig.
+#
+ENABLE_SUSECONFIG_VMAILMGR="yes"
+
+## Type:	string
+## Default:	"autoresponse"
+#
+# Identifies the subdirectory of the virtual user directory in which all
+# autoresponse data is stored.
+#
+VMAILMGR_AUTORESPONSE_DIR="autoresponse"
+
+## Type:	string
+## Default:	"message.txt"
+#
+# Identifies the file name within the autoresponse directory that contains
+# the autoresponse message.
+#
+VMAILMGR_AUTORESPONSE_FILE="message.txt"
+
+## Type:	string
+## Default:	"bulletins"
+#
+# Identifies the subdirectory of the domain directory in which bulletins
+# local to a domain are stored.
+#
+VMAILMGR_BULLETIN_DIR="bulletins"
+
+## Type:	string
+## Default:	"Maildir"
+#
+# Sets the name of the directory to be used as a non-virtual user's
+# maildir.
+#
+VMAILMGR_DEFAULT_MAILDIR="./Maildir/"
+
+## Type:	integer
+## Default:	-1
+#
+# Sets the default message count limit.
+#
+VMAILMGR_DEFAULT_MSGCOUNT="-1"
+
+## Type:	integer
+## Default:	-1
+#
+# Sets the default message size limit, in bytes.
+#
+VMAILMGR_DEFAULT_MSGSIZE="-1"
+
+## Type:	integer
+## Default:	-1
+#
+# Sets the default hard quota, in bytes.
+#
+VMAILMGR_DEFAULT_HARDQUOTA="-1"
+
+## Type:	integer
+## Default:	-1
+#
+# Sets the default soft quota, in bytes.
+#
+VMAILMGR_DEFAULT_SOFTQUOTA="-1"
+
+## Type:	string
+## Default:	"+"
+#
+# Identifies the name of the virtual user to be looked up if a lookup of
+# another virtual user fails.
+#
+VMAILMGR_DEFAULT_USERNAME="+"
+
+## Type:	string
+## Default:	"passwd"
+#
+# Identifies the file that contains user names, passwords, and
+# destinations for a virtual domain. Note that this has nothing to do
+# with "real" users, for which the password file is determined by the
+# system libraries.
+#
+VMAILMGR_PASSWORD_FILE="passwd"
+
+## Type:	string(mailer-daemon,postmaster,root)
+## Default:	"mailer-daemon postmaster root"
+#
+# A list of aliases to the postmaster email address to set up when
+# creating a new virtual domain with the vsetup command. This should
+# always contain both `postmaster' and `mailer-daemon' (required by the
+# RFCs), and should usually contain `root'.
+#
+VMAILMGR_POSTMASTER_ALIASES="mailer-daemon postmaster root"
+
+## Type:	string
+## Default:	"postmaster@"
+#
+# Identifies the email address of the entity responsible for the
+# administration of the (virtual) host when building the postmaster aliases
+# above. If this value ends with a trailing `@', the value of
+# `/var/qmail/control/me' is filled in for the host name. If no `@' is
+# present, the current virtual host name is filled in by vdeliver. If this is
+# set to `postmaster', a mail loop will result and all mail to this address
+# will bounce.
+#
+VMAILMGR_POSTMASTER_EMAIL="postmaster@"
+
+## Type:	string
+## Default:	"@:"
+#
+# Identifies the set of valid separators within a user login name between the
+# virtual user name and virtual domain name when logging in via checkvpw. For
+# example, if separators contains `@:' then `user@domain' and `user:domain'
+# are equivalent POP mailbox names.
+#
+VMAILMGR_SEPARATORS="@:"
+
+## Type:	string
+## Default:	"/var/run/vmailmgrd"
+#
+# Identifies the file name of the local socket used to communicate between
+# the vmailmgr daemon and the other programs. Warning: Changing this in the
+# local configuration directories will cause vdeliver to fail.
+#
+VMAILMGR_SOCKET_FILE="/var/run/vmailmgrd"
+
+## Type:	string
+## Default:	"users"
+#
+# Identifies the subdirectory from the virtual domain directory in which a
+# virtual user's maildir will be created. Since this maildir is recorded in
+# the password table, it does not have to be the same for each user within a
+# domain. This is prefixed with `./' before it is used in the password table.
+#
+VMAILMGR_USER_DIR="users"

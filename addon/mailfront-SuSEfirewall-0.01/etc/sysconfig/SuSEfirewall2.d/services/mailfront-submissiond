@@ -1,0 +1,5 @@
+## Name: mailfront-submissiond
+## Description: Open the submission port for mailfront-submissiond.
+
+# space separated list of allowed TCP ports
+TCP="submission"

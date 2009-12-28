@@ -1,0 +1,4 @@
+#!/bin/sh
+umask 0
+exec envuidgid qmails \
+    ipcserver -U -q -c 5 /var/run/qmail-qstat qmail-qstat

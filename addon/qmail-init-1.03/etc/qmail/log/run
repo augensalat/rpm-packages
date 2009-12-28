@@ -1,0 +1,10 @@
+#!/bin/sh
+
+test -x /usr/share/qmail/create-log-config-qmail -a /etc/sysconfig/qmail -nt ../env/LOGSIZE && \
+    /usr/share/qmail/create-log-config-qmail
+
+exec envdir ../env sh -c '
+    cd /var/log
+    exec setuidgid qmaillog \
+	multilog t ${LOGSIZE+"s$LOGSIZE"} ${LOGNUM+"n$LOGNUM"} ./qmail
+'

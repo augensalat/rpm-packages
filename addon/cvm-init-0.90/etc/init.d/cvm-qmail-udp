@@ -1,0 +1,79 @@
+#! /bin/sh
+#
+# Author: Bernhard Graf <graf@movingtarget.de>
+#
+# /etc/init.d/cvm-qmail-udp
+#
+#   and symbolic its link
+#
+# /usr/sbin/rccvm-qmail-udp
+#
+# System startup script for cvm-qmail-udp
+#
+### BEGIN INIT INFO
+# Provides:		cvm-qmail-udp
+# Required-Start:	$network $remote_fs
+# Required-Stop:	$network $remote_fs
+# Default-Start:	3 5
+# Default-Stop:		0 1 2 6
+# Description:		Start cvm-qmail-udp
+### END INIT INFO
+
+test -L "/service/cvm-qmail-udp" || exit 5
+
+# Shell functions sourced from /etc/rc.status
+. /etc/rc.status
+
+# First reset status of this service
+rc_reset
+
+case "$1" in
+    start)
+	echo -n "Starting cvm-qmail-udp"
+	svc-start cvm-qmail-udp
+
+	# Remember status and be verbose
+	rc_status -v
+	;;
+    stop)
+	echo -n "Shutting down cvm-qmail-udp"
+	svc-stop cvm-qmail-udp
+
+	# Remember status and be verbose
+	rc_status -v
+	;;
+    try-restart)
+	## Stop the service and if this succeeds (i.e. the 
+	## service was running before), start it again.
+	$0 stop  &&  $0 start
+
+	# Remember status and be quiet
+	rc_status
+	;;
+    restart)
+	## Stop the service and regardless of whether it was
+	## running or not, start it again.
+	$0 stop
+	$0 start
+
+	# Remember status and be quiet
+	rc_status
+	;;
+    reload|force-reload)
+	## Signal the daemon to reload its config with svc -t .
+	echo -n "Reloading cvm-qmail-udp"
+	## if it supports it:
+	svc -t "$service/cvm-qmail-udp"
+
+	rc_status -v
+	;;
+    status)
+	echo -n "Checking for cvm-qmail-udp: "
+	svc-status cvm-qmail-udp
+	;;
+    *)
+	echo "Usage: $0 {start|stop|status|try-restart|restart|reload}"
+	exit 1
+	;;
+esac
+rc_exit

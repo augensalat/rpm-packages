@@ -1,0 +1,9 @@
+#!/bin/sh
+
+test -x /usr/share/mailfront/create-log-config-mailfront-pop3sd -a /etc/sysconfig/mailfront -nt ../env/LOGSIZE && \
+    /usr/share/mailfront/create-log-config-mailfront-pop3sd
+
+exec envdir ../env sh -c '
+    exec setuidgid qmaillog \
+	multilog t ${LOGSIZE+s$LOGSIZE} ${LOGNUM+n$LOGNUM} /var/log/mailfront-pop3sd
+'

@@ -1,0 +1,20 @@
+#!/bin/sh
+
+exec 2>&1 \
+    envdir /etc/vmailmgr/env sh -c '
+
+	# Start daemons.
+	tcprules=${VMAILMGRTCP_TCPRULES:+"-x $VMAILMGRTCP_TCPRULES"}
+	concurrency=${VMAILMGRTCP_CONCURRENCY:+"-c $VMAILMGRTCP_CONCURRENCY"}
+	localname=${VMAILMGRTCP_LOCALNAME:-"`head -1 /etc/qmail/control/me`"}
+
+	softlimit="softlimit -c 0"
+	softlimit=${VMAILMGRTCP_LIMITDATA:+"$softlimit -d $VMAILMGRTCP_LIMITDATA"}
+	softlimit=${VMAILMGRTCP_LIMITCPU:+"$softlimit -t $VMAILMGRTCP_LIMITCPU"}
+
+	exec \
+	$softlimit \
+	tcpserver -DHRv $concurrency -l $localname $tcprules \
+		${VMAILMGRTCP_ADDRESS:-0} ${VMAILMGRTCP_PORT:-322} \
+	vmailmgrd -D -V
+'

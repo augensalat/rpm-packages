@@ -1,0 +1,150 @@
+## Type:        ip
+## Default:     ""
+## Command:	svc -t /service/mailfront-pop3sd
+#
+# IP address the POP3S daemon should bind to on this host.
+# Default is "", which means to listen on all addresses of this host.
+#
+POP3S_ADDRESS=""
+
+## Type:        string
+## Default:     "995"
+## Command:	svc -t /service/mailfront-pop3sd
+#
+# Port number or name (from /etc/services) for the pop3s daemon.
+#
+POP3S_PORT="995"
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/mailfront-pop3sd
+#
+# Set local hostname to keep tcpserver from looking it up in DNS.
+# Default is "", which means using the result of "hostname -f".
+# A common choice for localname is 0. To avoid loops, you must use this
+# option for servers on TCP port 53.
+#
+POP3S_LOCALNAME=""
+
+## Type:        integer
+## Default:     20
+## Command:	svc -t /service/mailfront-pop3sd
+#
+# Maximum number of simultaneous pop3 daemon processes.
+#
+POP3S_CONCURRENCY="20"
+
+## Type:        integer
+## Default:     20000000
+## Command:	svc -t /service/mailfront-pop3sd
+#
+# Memory limit in bytes for daemon.
+# Important: You probably want to raise this limit significantly if you
+#            have an SSL enabled tcpserver!
+#
+POP3S_LIMIT="20000000"
+
+## Type:        string
+## Default:     "/etc/mailfront-pop3sd/ssl/certificate.pem"
+## Command:	svc -t /service/mailfront-pop3sd
+#
+# Path to PEM formatted SSL certificate file.
+# If no such file exists, the start routine will try to create a
+# self-signed certificate. Before that happens you probably want to edit
+# the certificate config file /etc/mailfront-pop3sd/ssl/openssl.cnf.
+#
+POP3S_CERTFILE="/etc/mailfront-pop3sd/ssl/certificate.pem"
+
+## Type:        string
+## Default:     "/etc/mailfront-pop3sd/ssl/privatekey.pem"
+## Command:	svc -t /service/mailfront-pop3sd
+#
+# Path to PEM formatted SSL private key file.
+# If no such file exists, the start routine will try to create a private
+# key.
+#
+POP3S_KEYFILE="/etc/mailfront-pop3sd/ssl/privatekey.pem"
+
+## Type:        string
+## Default:     "/etc/mailfront-pop3sd/ssl/dh1024.pem"
+## Command:	svc -t /service/mailfront-pop3sd
+#
+# Path to Diffie-Hellman-Parameter file.
+# If this is empty, sslserver will try to use the built-in path to
+# a DH-Parameter file.
+#
+POP3S_DHFILE="/etc/mailfront-pop3sd/ssl/dh1024.pem"
+
+## Type:        integer
+## Default:     120
+## Command:	svc -t /service/mailfront-pop3sd
+#
+# Number of seconds pop3front-auth will wait for each new buffer of data
+# from the remote SMTP client.
+#
+POP3S_TIMEOUT="120"
+
+## Type:        integer
+## Default:     3600
+## Command:	svc -t /service/mailfront-pop3sd
+#
+# Times out seconds after the connection was established.
+#
+POP3S_SESSION_TIMEOUT="3600"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/mailfront-pop3sd
+#
+# Space separated list of IP numbers or IP number ranges of hosts that
+# can connect to our POP3 daemon.
+# Examples for IP ranges: "192.168. 213.191.36.100-120 10.0.0-63."
+# Access from any IP is granted if left empty.
+#
+POP3S_ALLOWFROMIP=""
+
+## Type:        list(command,local,udp)
+## Default:     "command"
+## Command:	svc -t /service/mailfront-pop3sd
+#
+# Contact mode to Credential Validation Modules.
+# Values of "command" and "local" require the CVM module to be installed
+# on the same host. Values of "local" and "udp" require a running CVM
+# authentication module at the location provided by the POP3S_CVM_LOCATION
+# variable.
+#
+POP3S_CVM_MODE="command"
+
+## Type:        string
+## Default:     "cvm-unix"
+## Command:	svc -t /service/mailfront-pop3sd
+#
+# Meaning depends on value of $POP3S_CVM_MODE:
+# $POP3S_CVM_MODE=="command": Path to authentication CVM module. 
+# $POP3S_CVM_MODE=="local": Path to unix socket file.
+# $POP3S_CVM_MODE=="udp": "host:port"
+#
+POP3S_CVM_LOCATION="cvm-unix"
+
+## Type:        integer(4096:16777215)
+## Default:     99999
+## Command:	svc -t /service/mailfront-pop3sd/log
+#
+# sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+POP3S_LOGSIZE="99999"
+
+## Type:	integer(2:)
+## Default:	10
+## Command:	svc -t /service/mailfront-pop3sd/log
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+POP3S_LOGNUM="10"
+

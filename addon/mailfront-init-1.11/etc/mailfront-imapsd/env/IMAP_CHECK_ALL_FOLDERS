@@ -1,0 +1,14 @@
+0
+
+# Set IMAP_CHECK_ALL_FOLDERS to 1 if you want the server to check for new
+# mail in every folder.  Not all IMAP clients use the IMAP's new mail
+# indicator, but some do.  Normally new mail is checked only in INBOX,
+# because it is a comparatively time consuming operation, and it would be
+# a complete waste of time unless mail filters are used to deliver
+# mail directly to folders.
+#
+# When IMAP clients are used which support new mail indication, and when
+# mail filters are used to sort incoming mail into folders, setting
+# IMAP_CHECK_ALL_FOLDERS to 1 will allow IMAP clients to announce new
+# mail in folders.  Note that this will result in slightly more load on the
+# server.

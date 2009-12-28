@@ -1,0 +1,5 @@
+## Name: mailfront-qmtpd
+## Description: Open the qmtp port for mailfront-qmtpd.
+
+# space separated list of allowed TCP ports
+TCP="qmtp"

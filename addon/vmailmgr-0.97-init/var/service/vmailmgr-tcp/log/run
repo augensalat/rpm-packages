@@ -1,0 +1,9 @@
+#!/bin/sh
+
+exec envdir /etc/vmailmgr/env sh -c '
+    cd /var/log/vmailmgr
+    exec \
+	setuidgid vmaillog \
+	multilog t ${VMAILMGRTCP_LOGSIZE+"s$VMAILMGRTCP_LOGSIZE"} ${VMAILMGRTCP_LOGNUM+"s$VMAILMGRTCP_LOGNUM"} \
+	./tcp
+'

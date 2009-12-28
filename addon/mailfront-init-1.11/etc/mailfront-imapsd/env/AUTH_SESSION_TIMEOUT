@@ -1,0 +1,4 @@
+86400
+
+# Times out connections after <above value> seconds after the connection
+# was established (defaults to 86400 seconds or 24 hours).

@@ -1,0 +1,11 @@
+--- readwrite.h	1998-06-15 12:53:16.000000000 +0200
++++ readwrite.h	2008-02-21 21:57:23.000000000 +0100
+@@ -1,7 +1,6 @@
+ #ifndef READWRITE_H
+ #define READWRITE_H
+ 
+-extern int read();
+-extern int write();
++#include <unistd.h>
+ 
+ #endif

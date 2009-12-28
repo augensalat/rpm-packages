@@ -1,0 +1,12 @@
+#!/bin/sh
+
+exec 2>&1
+
+if test -x /usr/share/cvm/create-config-cvm-vmlookup-udp ; then
+    test /etc/sysconfig/cvm -nt ./env/ADDRESS -o ! -s ./env/CVM_LOOKUP_SECRET && \
+	/usr/share/cvm/create-config-cvm-vmlookup-udp
+
+exec envdir ./env sh -c '
+    exec ${LIMIT:+softlimit -m $LIMIT} \
+	cvm-vmailmgr cvm-udp:${ADDRESS:-0}:${PORT:-324}
+'

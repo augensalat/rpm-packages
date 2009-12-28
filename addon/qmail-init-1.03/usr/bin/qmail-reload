@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if test "$UID" != 0 -a "$USER" != root; then
+    echo "You must be root to start $0."
+    exit 1
+fi
+
+set -e
+
+cd /etc/qmail/users
+if [ -s assign -a -s cdb ]; then
+  echo "Regenerating qmail/users/cdb"
+  qmail-pw2u </etc/passwd >assign && qmail-newu
+fi
+
+cd /etc/qmail/control
+if [ morercpthosts -nt morercpthosts.cdb ]; then
+  echo "Regenerating qmail/control/morercpthosts.cdb"
+  qmail-newmrh
+fi
+
+echo "Issuing the qmail reload signal."
+svc -h /service/qmail

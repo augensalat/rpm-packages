@@ -1,0 +1,79 @@
+#! /bin/sh
+#
+# Author: Bernhard Graf <graf@movingtarget.de>
+#
+# /etc/init.d/cvm-qmail-local
+#
+#   and symbolic its link
+#
+# /usr/sbin/rccvm-qmail-local
+#
+# System startup script for cvm-qmail-local
+#
+### BEGIN INIT INFO
+# Provides:		cvm-qmail-local
+# Required-Start:	$network $remote_fs
+# Required-Stop:	$network $remote_fs
+# Default-Start:	3 5
+# Default-Stop:		0 1 2 6
+# Description:		Start cvm-qmail-local
+### END INIT INFO
+
+test -L "/service/cvm-qmail-local" || exit 5
+
+# Shell functions sourced from /etc/rc.status
+. /etc/rc.status
+
+# First reset status of this service
+rc_reset
+
+case "$1" in
+    start)
+	echo -n "Starting cvm-qmail-local"
+	svc-start cvm-qmail-local
+
+	# Remember status and be verbose
+	rc_status -v
+	;;
+    stop)
+	echo -n "Shutting down cvm-qmail-local"
+	svc-stop cvm-qmail-local
+
+	# Remember status and be verbose
+	rc_status -v
+	;;
+    try-restart)
+	## Stop the service and if this succeeds (i.e. the 
+	## service was running before), start it again.
+	$0 stop  &&  $0 start
+
+	# Remember status and be quiet
+	rc_status
+	;;
+    restart)
+	## Stop the service and regardless of whether it was
+	## running or not, start it again.
+	$0 stop
+	$0 start
+
+	# Remember status and be quiet
+	rc_status
+	;;
+    reload|force-reload)
+	## Signal the daemon to reload its config with svc -t .
+	echo -n "Reloading cvm-qmail-local"
+	## if it supports it:
+	svc -t "$service/cvm-qmail-local"
+
+	rc_status -v
+	;;
+    status)
+	echo -n "Checking for cvm-qmail-local: "
+	svc-status cvm-qmail-local
+	;;
+    *)
+	echo "Usage: $0 {start|stop|status|try-restart|restart|reload}"
+	exit 1
+	;;
+esac
+rc_exit

@@ -1,0 +1,3 @@
+#!/bin/sh
+ipccat /var/run/qmail-qstat
+ipccat /var/run/qmail-qread

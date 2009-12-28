@@ -1,0 +1,19 @@
+#!/bin/sh
+
+exec 2>&1
+
+if test -x /usr/share/mailfront/create-config-mailfront-pop3d ; then
+    test /etc/sysconfig/mailfront -nt ./env/ADDRESS -o /etc/sysconfig/mail -nt ./env/ADDRESS && \
+	/usr/share/mailfront/create-config-mailfront-pop3d
+fi
+
+exec envdir ./env sh -c '
+    test -s ./rules/data.cdb && tcprules="-x ./rules/data.cdb" || tcprules=""
+
+    exec \
+	${LIMIT:+softlimit -d $LIMIT} \
+	tcpserver -dHRv -c ${CONCURRENCY:-20} -l ${LOCALNAME:-$(head -1 /var/qmail/control/me)} \
+		$tcprules ${ADDRESS:-0} ${PORT:-110} \
+	pop3front-auth ${CVM_SASL_PLAIN:-"cvm-command:cvm-unix"} \
+	pop3front-maildir Maildir
+'

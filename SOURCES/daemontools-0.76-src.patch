@@ -1,0 +1,58 @@
+diff -uNP src.orig/error.h src/error.h
+--- src.orig/error.h	2001-07-12 18:49:49.000000000 +0200
++++ src/error.h	2003-05-07 00:54:28.000000000 +0200
+@@ -3,7 +3,7 @@
+ #ifndef ERROR_H
+ #define ERROR_H
+ 
+-extern int errno;
++#include <errno.h>
+ 
+ extern int error_intr;
+ extern int error_nomem;
+diff -uNP src.orig/readsvscantitle src/readsvscantitle
+--- src.orig/readsvscantitle	1970-01-01 01:00:00.000000000 +0100
++++ src/readsvscantitle	2003-05-07 00:54:03.000000000 +0200
+@@ -0,0 +1,4 @@
++#!/bin/sh
++
++tr '\000' ' ' < /proc/`cat /var/run/svscan-readproctitle`/cmdline
++echo ''
+diff -uNP src.orig/svscanboot.sh src/svscanboot.sh
+--- src.orig/svscanboot.sh	2001-07-12 18:49:49.000000000 +0200
++++ src/svscanboot.sh	2003-05-07 00:54:03.000000000 +0200
+@@ -1,11 +1,12 @@
+ 
+-PATH=/command:/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin
++PATH=/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin
+ 
+-exec </dev/null
+-exec >/dev/null
+-exec 2>/dev/null
++exec </dev/null >/dev/null 2>/dev/null
+ 
+-/command/svc -dx /service/* /service/*/log
++svc -dx /service/* /service/*/log
+ 
+-env - PATH=$PATH svscan /service 2>&1 | \
+-env - PATH=$PATH readproctitle service errors: ................................................................................................................................................................................................................................................................................................................................................................................................................
++echo $$ >/var/run/svscan-readproctitle
++
++exec csh -cf '
++  exec env - PATH="$PATH" svscan /service |& \
++  exec env - PATH="$PATH" readproctitle svscan: ................................................................................................................................................................................................................................................................................................................................................................................................................'
+diff -uNP src.orig/svscanboot.sh.orig src/svscanboot.sh.orig
+--- src.orig/svscanboot.sh.orig	1970-01-01 01:00:00.000000000 +0100
++++ src/svscanboot.sh.orig	2003-05-07 00:54:03.000000000 +0200
+@@ -0,0 +1,11 @@
++
++PATH=/command:/usr/local/bin:/usr/local/sbin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin
++
++exec </dev/null
++exec >/dev/null
++exec 2>/dev/null
++
++/command/svc -dx /service/* /service/*/log
++
++env - PATH=$PATH svscan /service 2>&1 | \
++env - PATH=$PATH readproctitle service errors: ................................................................................................................................................................................................................................................................................................................................................................................................................

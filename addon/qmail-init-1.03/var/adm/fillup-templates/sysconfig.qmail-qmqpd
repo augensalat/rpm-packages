@@ -1,0 +1,78 @@
+## Type:	ip
+## Default:	""
+## Command:	svc -t /service/qmail-qmqpd
+#
+# IP address the QMQP daemon should bind to on this host.
+# Default is "", which means to listen on all addresses of this host.
+#
+QMQP_ADDRESS="0"
+
+## Type:	string
+## Default:	"628"
+## Command:	svc -t /service/qmail-qmqpd
+#
+# Port number or name (from /etc/services) for the qmqp daemon.
+#
+QMQP_PORT="628"
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/qmail-qmqpd
+#
+# Set local hostname to keep tcpserver from looking it up in DNS.
+# Default is "", which means using the result of "hostname -f".
+# A common choice for localname is 0. To avoid loops, you must use this
+# option for servers on TCP port 53.
+#
+QMQP_LOCALNAME=""
+
+## Type:        integer
+## Default:     20
+## Command:	svc -t /service/qmail-qmqpd
+#
+# Maximum number of simultaneous qmqp daemon processes.
+#
+QMQP_CONCURRENCY="20"
+
+## Type:        integer
+## Default:	10000000
+## Command:	svc -t /service/qmail-qmqpd
+#
+# Memory limit in bytes for daemon.
+# Important: You probably want to raise this limit significantly if you
+#            have an SSL enabled tcpserver!
+#
+QMQP_LIMIT="10000000"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail-qmqpd
+#
+# List of IP numbers or IP number ranges of hosts that can send their emails
+# through our qmqp server.
+# Examples for IP ranges: "192.168., 213.191.36.100-120, 10.0.0-63."
+#
+QMQP_RELAYFROMIP=""
+
+## Type:        integer
+## Default:     99999
+## Command:	svc -t /service/qmail-qmqpd/log
+#
+# sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+QMQP_LOGSIZE="99999"
+
+## Type:	integer
+## Default:	10
+## Command:	svc -t /service/qmail-qmqpd/log
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+QMQP_LOGNUM="10"
+

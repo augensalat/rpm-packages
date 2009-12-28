@@ -1,0 +1,18 @@
+[ req ]
+default_bits = 1024
+encrypt_key = yes
+distinguished_name = req_dn
+x509_extensions = cert_type
+prompt = no
+
+[ req_dn ]
+C=US
+ST=NY
+L=New York
+O=Private Matters
+OU=Email
+CN=mail.example.com
+emailAddress=postmaster@example.com
+
+[ cert_type ]
+nsCertType = server

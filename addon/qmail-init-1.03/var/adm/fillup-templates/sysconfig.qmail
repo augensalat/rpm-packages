@@ -1,0 +1,189 @@
+## Path:        Network/Mail/qmail
+## Description: Basic configuration of the qmail MTA
+## Type:        yesno
+## Default:     "yes"
+## Command:	svc -t /service/qmail
+#
+# Configuration file generation from the settings here is disabled, if
+# either QMAIL_CREATE_CONFIG="no" or in /etc/sysconfig/mail
+# MAIL_CREATE_CONFIG="no" .
+#
+QMAIL_CREATE_CONFIG="yes"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail
+#
+# Contains the fully-qualified name of the current host.
+# If empty the output of `/sbin/hostname -f` is used.
+#
+QMAIL_ME=""
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail
+#
+# Should we use a mailrelay?
+# NOTE: ALL mail that is not considered to be my destination
+# (QMAIL_LOCALDOMAINS), will be sent to this host.
+# You may also specify an alternate port number, e.g. relay.host.de:26.
+#
+QMAIL_RELAYHOST=""
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail
+#
+# Artificial SMTP routes, separated by colons. Each route has the form
+# domain:relay, without any extra spaces. If domain matches host,
+# qmail-remote will connect to relay, as if host had relay as its only MX.
+# (It will also avoid doing any CNAME lookups on recip.) host may include a
+# colon and a port number to use instead of the normal SMTP port, 25:
+#
+#   "inside.af.mil:firewall.af.mil:26"
+#
+# relay may be empty; this tells qmail-remote to look up MX records as
+# usual. QMAIL_SMTPROUTES may include wildcards:
+#
+#   ".af.mil: :heaven.af.mil"
+#
+# Here  any  address  ending  with .af.mil (but not af.mil itself) is
+# routed by its MX records; any other address is artificially routed to
+# heaven.af.mil.
+#
+# Note: The qmail system does not protect you if you create an artificial
+# mail loop between machines.
+#
+# QMAIL_SMTPROUTES overwrites QMAIL_RELAYHOST!
+#
+QMAIL_SMTPROUTES=""
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail
+#
+# Default host name. qmail-inject  adds  this name to any address without a
+# host name. defaulthost need not be the current host's name. For example,
+# you may prefer that outgoing mail show just your domain name.
+#
+QMAIL_DEFAULTHOST=""
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail
+#
+# List of host-/domainnames for which qmail should accept mail for.
+# localhost, the own hostname and all domain names for this host's IP
+# addresses is the default if QMAIL_LOCALDOMAINS is set empty.
+#
+QMAIL_LOCALDOMAINS=""
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail
+#
+# List of domainname:username pairs for which qmail should route all mail of a domain to a user.
+# Example: "nowhere.mil:bob everywhere.mil:bill"
+QMAIL_VIRTUALDOMAINS=""
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail
+#
+# List of domains that we relay (and that are not local domains).
+# Wildcards allowed (domain names starting with a dot).
+# You have to run an SMTP or qmtp daemon before this setting is of any use.
+#
+# Example: QMAIL_RELAYDOMAINS="neighbour.net .neighbour.net myfriend.org"
+#
+QMAIL_RELAYDOMAINS=""
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail
+#
+# Bounce username. An empty value defaults to MAILER-DAEMON in bounces.
+#
+QMAIL_BOUNCEFROM=""
+
+## Type:        integer
+## Default:     10
+## Command:	svc -t /service/qmail
+#
+# Maximum number of simultaneous local delivery attempts.
+# If 0, local deliveries will be put on hold.
+# Limited at compile time to 509.
+#
+QMAIL_CONCURRENCYLOCAL="10"
+
+## Type:        integer
+## Default:     20
+## Command:	svc -t /service/qmail
+#
+# Maximum number of simultaneous remote delivery attempts.
+# If 0, remote deliveries will be put on hold.
+# Limited at compile time to 509.
+#
+QMAIL_CONCURRENCYREMOTE="20"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail
+#
+# User to receive double-bounces. If a single-bounce notice is permanently
+# undeliverable, qmail-send sends a double-bounce notice to this user.
+# (If that bounces, qmail-send gives up.)
+# Defaults to "postmaster" if left empty here.
+#
+QMAIL_DOUBLEBOUNCETO=""
+
+## Type:        integer
+## Default:     604800
+## Command:	svc -t /service/qmail
+#
+# Number of seconds a message can stay in the queue. After this time
+# expires, qmail-send will try the message once more, but it will treat
+# any temporary delivery failures as permanent failures.
+#
+QMAIL_QUEUELIFETIME="604800"
+
+## Type:        integer
+## Default:     60
+## Command:	svc -t /service/qmail
+#
+# Number of seconds qmail-remote will wait for the remote SMTP server to
+# accept a connection. The kernel normally imposes a 75-second upper limit.
+#
+QMAIL_TIMEOUTCONNECT="60"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail
+#
+# List of ip addresses of QMQP servers. qmail-qmqpc will try each address
+# in turn until it establishes a QMQP connection or runs out of addresses.
+#
+QMAIL_QMQPSERVERS=""
+
+## Type:        integer
+## Default:     99999
+## Command:	svc -t /service/qmail/log
+#
+# sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+QMAIL_LOGSIZE="99999"
+
+## Type:	integer
+## Default:	10
+## Command:	svc -t /service/qmail/log
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+QMAIL_LOGNUM="10"
+

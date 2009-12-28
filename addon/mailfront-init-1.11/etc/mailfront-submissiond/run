@@ -1,0 +1,24 @@
+#!/bin/sh
+
+exec 2>&1
+
+if test -x /usr/share/mailfront/create-config-mailfront-submissiond ; then
+    test /etc/sysconfig/mailfront -nt ./env/ADDRESS -o /etc/sysconfig/mail -nt ./env/ADDRESS && \
+	/usr/share/mailfront/create-config-mailfront-submissiond
+fi
+
+exec envdir ./env sh -c '
+    test -s ./rules/data.cdb && tcprules="-x ./rules/data.cdb" || tcprules=""
+
+    plugins="check-fqdn"
+    test -n "$DATABYTES" -o -n "$MAXRCPTS" && plugins="$plugins counters"
+    test -n "$MAILRULES" -a -f "$MAILRULES" && plugins="$plugins mailrules"
+    plugins="$plugins require-auth relayclient accept-sender"
+
+    exec \
+	${LIMIT:+softlimit -d $LIMIT} \
+	envuidgid qmaild \
+	tcpserver -DRUvX -c ${CONCURRENCY:-20} -l ${LOCALNAME:-$(head -1 /var/qmail/control/me)} \
+		$tcprules ${ADDRESS:-0} ${PORT:-587} \
+	mailfront smtp qmail ${plugins}
+'

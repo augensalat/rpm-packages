@@ -1,0 +1,5 @@
+## Name: mailfront-imapd
+## Description: Open the imap port for mailfront-imapd.
+
+# space separated list of allowed TCP ports
+TCP="imap"

@@ -1,0 +1,5 @@
+0
+
+# Set IMAP_TLS_REQUIRED to 1 if you REQUIRE STARTTLS for everyone.
+# (this option advertises the LOGINDISABLED IMAP capability, until STARTTLS
+# is issued).

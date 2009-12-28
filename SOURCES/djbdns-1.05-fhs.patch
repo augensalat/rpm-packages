@@ -1,0 +1,487 @@
+diff -u djbdns-1.05.orig/Makefile djbdns-1.05/Makefile
+--- djbdns-1.05.orig/Makefile	2001-02-11 22:11:45.000000000 +0100
++++ djbdns-1.05/Makefile	2003-05-06 23:42:35.000000000 +0200
+@@ -59,13 +59,14 @@
+ 	alloc.a env.a cdb.a buffer.a unix.a byte.a 
+ 
+ axfrdns-conf: \
+-load axfrdns-conf.o generic-conf.o auto_home.o buffer.a unix.a byte.a
++load axfrdns-conf.o generic-conf.o auto_home.o buffer.a unix.a byte.a \
++alloc.a
+ 	./load axfrdns-conf generic-conf.o auto_home.o buffer.a \
+-	unix.a byte.a 
++	unix.a byte.a alloc.a
+ 
+ axfrdns-conf.o: \
+ compile axfrdns-conf.c strerr.h exit.h auto_home.h generic-conf.h \
+-buffer.h
++buffer.h stralloc.h
+ 	./compile axfrdns-conf.c
+ 
+ axfrdns.o: \
+@@ -328,14 +329,14 @@
+ 
+ dnscache-conf: \
+ load dnscache-conf.o generic-conf.o auto_home.o libtai.a buffer.a \
+-unix.a byte.a
++unix.a byte.a alloc.a
+ 	./load dnscache-conf generic-conf.o auto_home.o libtai.a \
+-	buffer.a unix.a byte.a 
++	buffer.a unix.a byte.a alloc.a
+ 
+ dnscache-conf.o: \
+ compile dnscache-conf.c hasdevtcp.h strerr.h buffer.h uint32.h taia.h \
+ tai.h uint64.h str.h open.h error.h exit.h auto_home.h generic-conf.h \
+-buffer.h
++buffer.h stralloc.h
+ 	./compile dnscache-conf.c
+ 
+ dnscache.o: \
+@@ -486,7 +487,7 @@
+ 
+ generic-conf.o: \
+ compile generic-conf.c strerr.h buffer.h open.h generic-conf.h \
+-buffer.h
++buffer.h stralloc.h
+ 	./compile generic-conf.c
+ 
+ getln.o: \
+@@ -633,13 +634,14 @@
+ 	byte.a  `cat socket.lib`
+ 
+ pickdns-conf: \
+-load pickdns-conf.o generic-conf.o auto_home.o buffer.a unix.a byte.a
++load pickdns-conf.o generic-conf.o auto_home.o buffer.a unix.a byte.a \
++alloc.a
+ 	./load pickdns-conf generic-conf.o auto_home.o buffer.a \
+-	unix.a byte.a 
++	unix.a byte.a alloc.a
+ 
+ pickdns-conf.o: \
+ compile pickdns-conf.c strerr.h exit.h auto_home.h generic-conf.h \
+-buffer.h
++buffer.h stralloc.h
+ 	./compile pickdns-conf.c
+ 
+ pickdns-data: \
+@@ -711,13 +713,14 @@
+ 	byte.a  `cat socket.lib`
+ 
+ rbldns-conf: \
+-load rbldns-conf.o generic-conf.o auto_home.o buffer.a unix.a byte.a
++load rbldns-conf.o generic-conf.o auto_home.o buffer.a unix.a byte.a \
++alloc.a
+ 	./load rbldns-conf generic-conf.o auto_home.o buffer.a \
+-	unix.a byte.a 
++	unix.a byte.a alloc.a
+ 
+ rbldns-conf.o: \
+ compile rbldns-conf.c strerr.h exit.h auto_home.h generic-conf.h \
+-buffer.h
++buffer.h stralloc.h
+ 	./compile rbldns-conf.c
+ 
+ rbldns-data: \
+@@ -987,13 +990,14 @@
+ 	unix.a byte.a  `cat socket.lib`
+ 
+ tinydns-conf: \
+-load tinydns-conf.o generic-conf.o auto_home.o buffer.a unix.a byte.a
++load tinydns-conf.o generic-conf.o auto_home.o buffer.a unix.a byte.a \
++alloc.a
+ 	./load tinydns-conf generic-conf.o auto_home.o buffer.a \
+-	unix.a byte.a 
++	unix.a byte.a alloc.a
+ 
+ tinydns-conf.o: \
+ compile tinydns-conf.c strerr.h exit.h auto_home.h generic-conf.h \
+-buffer.h
++buffer.h stralloc.h
+ 	./compile tinydns-conf.c
+ 
+ tinydns-data: \
+@@ -1091,13 +1095,14 @@
+ 	byte.a  `cat socket.lib`
+ 
+ walldns-conf: \
+-load walldns-conf.o generic-conf.o auto_home.o buffer.a unix.a byte.a
++load walldns-conf.o generic-conf.o auto_home.o buffer.a unix.a byte.a \
++alloc.a
+ 	./load walldns-conf generic-conf.o auto_home.o buffer.a \
+-	unix.a byte.a 
++	unix.a byte.a alloc.a
+ 
+ walldns-conf.o: \
+ compile walldns-conf.c strerr.h exit.h auto_home.h generic-conf.h \
+-buffer.h
++buffer.h stralloc.h
+ 	./compile walldns-conf.c
+ 
+ walldns.o: \
+diff -u djbdns-1.05.orig/axfrdns-conf.c djbdns-1.05/axfrdns-conf.c
+--- djbdns-1.05.orig/axfrdns-conf.c	2001-02-11 22:11:45.000000000 +0100
++++ djbdns-1.05/axfrdns-conf.c	2003-05-06 23:42:35.000000000 +0200
+@@ -18,9 +18,12 @@
+ struct passwd *pw;
+ char *myip;
+ char *tinydns;
++char * service;
+ 
+ int main(int argc,char **argv)
+ {
++  unsigned int slashr;
++
+   user = argv[1];
+   if (!user) usage();
+   loguser = argv[2];
+@@ -28,6 +31,13 @@
+   dir = argv[3];
+   if (!dir) usage();
+   if (dir[0] != '/') usage();
++  while (1) {
++    slashr = str_rchr(dir, '/');
++    service = dir + slashr;
++    if (!*service) usage();	// no slash in dir
++    if (*++service) break;	// some characters following last slash
++    dir[slashr] = '\0';		// last char is slash -> cut and retry
++  }
+   tinydns = argv[4];
+   if (!tinydns) usage();
+   if (tinydns[0] != '/') usage();
+@@ -39,7 +49,7 @@
+     strerr_die3x(111,FATAL,"unknown account ",loguser);
+ 
+   init(dir,FATAL);
+-  makelog(loguser,pw->pw_uid,pw->pw_gid);
++  makelog(loguser,pw->pw_uid,pw->pw_gid, service);
+ 
+   makedir("env");
+   perm(02755);
+diff -u djbdns-1.05.orig/dnscache-conf.c djbdns-1.05/dnscache-conf.c
+--- djbdns-1.05.orig/dnscache-conf.c	2001-02-11 22:11:45.000000000 +0100
++++ djbdns-1.05/dnscache-conf.c	2003-05-06 23:42:35.000000000 +0200
+@@ -6,6 +6,7 @@
+ #include <sys/mkdev.h>
+ #endif
+ #include <pwd.h>
++#include "stralloc.h"
+ #include "strerr.h"
+ #include "buffer.h"
+ #include "uint32.h"
+@@ -33,6 +34,7 @@
+ char *loguser;
+ struct passwd *pw;
+ const char *myip;
++char *service;
+ 
+ uint32 seed[32];
+ int seedpos = 0;
+@@ -65,6 +67,9 @@
+ 
+ int main(int argc,char **argv)
+ {
++  stralloc sa = {0};
++  unsigned int slashr;
++
+   seed_addtime();
+   seed_adduint32(getpid());
+   seed_adduint32(getppid());
+@@ -78,6 +83,13 @@
+   dir = argv[3];
+   if (!dir) usage();
+   if (dir[0] != '/') usage();
++  while (1) {
++    slashr = str_rchr(dir, '/');
++    service = dir + slashr;
++    if (!*service) usage();	// no slash in dir
++    if (*++service) break;	// some characters following last slash
++    dir[slashr] = '\0';		// last char is slash -> cut and retry
++  }
+   myip = argv[4];
+   if (!myip) myip = "127.0.0.1";
+ 
+@@ -102,10 +114,14 @@
+ 
+   seed_addtime(); makedir("log");
+   seed_addtime(); perm(02755);
+-  seed_addtime(); makedir("log/main");
++  stralloc_copys(&sa, "/var/log/");
++  stralloc_cats(&sa, service);
++  stralloc_0(&sa);
++  seed_addtime(); trymakedir(sa.s);
+   seed_addtime(); owner(pw->pw_uid,pw->pw_gid);
+   seed_addtime(); perm(02755);
+-  seed_addtime(); start("log/status"); finish();
++  seed_addtime(); sa.len--; stralloc_cats(&sa, "/status"); stralloc_0(&sa);
++  seed_addtime(); start(sa.s); finish();
+   seed_addtime(); owner(pw->pw_uid,pw->pw_gid);
+   seed_addtime(); perm(0644);
+   seed_addtime(); makedir("env");
+@@ -127,7 +143,7 @@
+   seed_addtime(); perm(0755);
+   seed_addtime(); start("log/run");
+   outs("#!/bin/sh\nexec setuidgid "); outs(loguser);
+-  outs(" multilog t ./main\n"); finish();
++  outs(" multilog t /var/log/"); outs(service); outs("\n"); finish();
+   seed_addtime(); perm(0755);
+   seed_addtime(); makedir("root");
+   seed_addtime(); perm(02755);
+diff -u djbdns-1.05.orig/error.h djbdns-1.05/error.h
+--- djbdns-1.05.orig/error.h	2001-02-11 22:11:45.000000000 +0100
++++ djbdns-1.05/error.h	2003-05-06 23:44:42.000000000 +0200
+@@ -1,7 +1,7 @@
+ #ifndef ERROR_H
+ #define ERROR_H
+ 
+-extern int errno;
++#include <errno.h>
+ 
+ extern int error_intr;
+ extern int error_nomem;
+diff -u djbdns-1.05.orig/generic-conf.c djbdns-1.05/generic-conf.c
+--- djbdns-1.05.orig/generic-conf.c	2001-02-11 22:11:45.000000000 +0100
++++ djbdns-1.05/generic-conf.c	2003-05-06 23:42:35.000000000 +0200
+@@ -1,6 +1,8 @@
++#include <errno.h>
+ #include <unistd.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#include "stralloc.h"
+ #include "strerr.h"
+ #include "buffer.h"
+ #include "open.h"
+@@ -29,7 +31,10 @@
+ 
+ void fail(void)
+ {
+-  strerr_die6sys(111,fatal,"unable to create ",dir,"/",fn,": ");
++  if ( fn[0] == '/' )
++    strerr_die4sys(111,fatal,"unable to create ", fn,": ");
++  else
++    strerr_die6sys(111,fatal,"unable to create ",dir,"/",fn,": ");
+ }
+ 
+ void makedir(const char *s)
+@@ -38,6 +43,12 @@
+   if (mkdir(fn,0700) == -1) fail();
+ }
+ 
++void trymakedir(const char *s)
++{
++  fn = s;
++  if (mkdir(fn,0700) == -1 && errno != EEXIST) fail();
++}
++
+ void start(const char *s)
+ {
+   fn = s;
+@@ -78,14 +89,22 @@
+   if (chown(fn,uid,gid) == -1) fail();
+ }
+ 
+-void makelog(const char *user,int uid,int gid)
++void makelog(const char *user,int uid,int gid, char *service)
+ {
++  stralloc sa = {0};
++
+   makedir("log");
+   perm(02755);
+-  makedir("log/main");
++  stralloc_copys(&sa, "/var/log/");
++  stralloc_cats(&sa, service);
++  stralloc_0(&sa);
++  trymakedir(sa.s);
+   owner(uid,gid);
+   perm(02755);
+-  start("log/status");
++  sa.len--;	// strip trailing 0-byte
++  stralloc_cats(&sa, "/status");
++  stralloc_0(&sa);
++  start(sa.s);
+   finish();
+   owner(uid,gid);
+   perm(0644);
+@@ -93,7 +112,7 @@
+   start("log/run");
+   outs("#!/bin/sh\nexec");
+   outs(" setuidgid "); outs(user);
+-  outs(" multilog t ./main\n");
++  outs(" multilog t /var/log/"); outs(service); outs("\n");
+   finish();
+   perm(0755);
+ }
+diff -u djbdns-1.05.orig/generic-conf.h djbdns-1.05/generic-conf.h
+--- djbdns-1.05.orig/generic-conf.h	2001-02-11 22:11:45.000000000 +0100
++++ djbdns-1.05/generic-conf.h	2003-05-06 23:42:35.000000000 +0200
+@@ -6,6 +6,7 @@
+ extern void init(const char *,const char *);
+ 
+ extern void makedir(const char *);
++extern void trymakedir(const char *);
+ 
+ extern void start(const char *);
+ extern void outs(const char *);
+@@ -15,6 +16,6 @@
+ 
+ extern void perm(int);
+ extern void owner(int,int);
+-extern void makelog(const char *,int,int);
++extern void makelog(const char *,int,int, char *);
+ 
+ #endif
+diff -u djbdns-1.05.orig/pickdns-conf.c djbdns-1.05/pickdns-conf.c
+--- djbdns-1.05.orig/pickdns-conf.c	2001-02-11 22:11:45.000000000 +0100
++++ djbdns-1.05/pickdns-conf.c	2003-05-06 23:42:35.000000000 +0200
+@@ -17,9 +17,12 @@
+ char *loguser;
+ struct passwd *pw;
+ char *myip;
++char *service;
+ 
+ int main(int argc,char **argv)
+ {
++  unsigned int slashr;
++
+   user = argv[1];
+   if (!user) usage();
+   loguser = argv[2];
+@@ -27,6 +30,13 @@
+   dir = argv[3];
+   if (!dir) usage();
+   if (dir[0] != '/') usage();
++  while (1) {
++    slashr = str_rchr(dir, '/');
++    service = dir + slashr;
++    if (!*service) usage();	// no slash in dir
++    if (*++service) break;	// some characters following last slash
++    dir[slashr] = '\0';		// last char is slash -> cut and retry
++  }
+   myip = argv[4];
+   if (!myip) usage();
+ 
+@@ -35,7 +45,7 @@
+     strerr_die3x(111,FATAL,"unknown account ",loguser);
+ 
+   init(dir,FATAL);
+-  makelog(loguser,pw->pw_uid,pw->pw_gid);
++  makelog(loguser,pw->pw_uid,pw->pw_gid, service);
+ 
+   makedir("env");
+   perm(02755);
+diff -u djbdns-1.05.orig/rbldns-conf.c djbdns-1.05/rbldns-conf.c
+--- djbdns-1.05.orig/rbldns-conf.c	2001-02-11 22:11:45.000000000 +0100
++++ djbdns-1.05/rbldns-conf.c	2003-05-06 23:42:35.000000000 +0200
+@@ -18,9 +18,12 @@
+ struct passwd *pw;
+ char *myip;
+ char *base;
++char *service;
+ 
+ int main(int argc,char **argv)
+ {
++  unsigned int slashr;
++
+   user = argv[1];
+   if (!user) usage();
+   loguser = argv[2];
+@@ -28,6 +31,13 @@
+   dir = argv[3];
+   if (!dir) usage();
+   if (dir[0] != '/') usage();
++  while (1) {
++    slashr = str_rchr(dir, '/');
++    service = dir + slashr;
++    if (!*service) usage();	// no slash in dir
++    if (*++service) break;	// some characters following last slash
++    dir[slashr] = '\0';		// last char is slash -> cut and retry
++  }
+   myip = argv[4];
+   if (!myip) usage();
+   base = argv[5];
+@@ -38,7 +48,7 @@
+     strerr_die3x(111,FATAL,"unknown account ",loguser);
+ 
+   init(dir,FATAL);
+-  makelog(loguser,pw->pw_uid,pw->pw_gid);
++  makelog(loguser,pw->pw_uid,pw->pw_gid, service);
+ 
+   makedir("env");
+   perm(02755);
+diff -u djbdns-1.05.orig/tinydns-conf.c djbdns-1.05/tinydns-conf.c
+--- djbdns-1.05.orig/tinydns-conf.c	2001-02-11 22:11:45.000000000 +0100
++++ djbdns-1.05/tinydns-conf.c	2003-05-06 23:42:35.000000000 +0200
+@@ -17,9 +17,12 @@
+ char *loguser;
+ struct passwd *pw;
+ char *myip;
++char *service;
+ 
+ int main(int argc,char **argv)
+ {
++  unsigned int slashr;
++
+   user = argv[1];
+   if (!user) usage();
+   loguser = argv[2];
+@@ -27,6 +30,13 @@
+   dir = argv[3];
+   if (!dir) usage();
+   if (dir[0] != '/') usage();
++  while (1) {
++    slashr = str_rchr(dir, '/');
++    service = dir + slashr;
++    if (!*service) usage();	// no slash in dir
++    if (*++service) break;	// some characters following last slash
++    dir[slashr] = '\0';		// last char is slash -> cut and retry
++  }
+   myip = argv[4];
+   if (!myip) usage();
+ 
+@@ -35,7 +45,7 @@
+     strerr_die3x(111,FATAL,"unknown account ",loguser);
+ 
+   init(dir,FATAL);
+-  makelog(loguser,pw->pw_uid,pw->pw_gid);
++  makelog(loguser,pw->pw_uid,pw->pw_gid, service);
+ 
+   makedir("env");
+   perm(02755);
+diff -u djbdns-1.05.orig/walldns-conf.c djbdns-1.05/walldns-conf.c
+--- djbdns-1.05.orig/walldns-conf.c	2001-02-11 22:11:45.000000000 +0100
++++ djbdns-1.05/walldns-conf.c	2003-05-06 23:42:35.000000000 +0200
+@@ -17,9 +17,12 @@
+ char *loguser;
+ struct passwd *pw;
+ char *myip;
++char *service;
+ 
+ int main(int argc,char **argv)
+ {
++  unsigned int slashr;
++
+   user = argv[1];
+   if (!user) usage();
+   loguser = argv[2];
+@@ -27,6 +30,13 @@
+   dir = argv[3];
+   if (!dir) usage();
+   if (dir[0] != '/') usage();
++  while (1) {
++    slashr = str_rchr(dir, '/');
++    service = dir + slashr;
++    if (!*service) usage();	// no slash in dir
++    if (*++service) break;	// some characters following last slash
++    dir[slashr] = '\0';		// last char is slash -> cut and retry
++  }
+   myip = argv[4];
+   if (!myip) usage();
+ 
+@@ -35,7 +45,7 @@
+     strerr_die3x(111,FATAL,"unknown account ",loguser);
+ 
+   init(dir,FATAL);
+-  makelog(loguser,pw->pw_uid,pw->pw_gid);
++  makelog(loguser,pw->pw_uid,pw->pw_gid, service);
+ 
+   makedir("env");
+   perm(02755);

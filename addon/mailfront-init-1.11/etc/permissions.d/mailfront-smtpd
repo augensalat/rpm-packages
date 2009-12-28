@@ -1,0 +1,3 @@
+/etc/mailfront-smtpd/env				root.root	0700
+/usr/share/mailfront/create-config-mailfront-smtpd	root.root	0750
+/usr/share/mailfront/create-log-config-mailfront-smtpd	root.root	0750

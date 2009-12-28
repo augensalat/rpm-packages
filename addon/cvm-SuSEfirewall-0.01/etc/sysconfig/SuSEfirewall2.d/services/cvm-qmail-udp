@@ -1,0 +1,5 @@
+## Name: cvm-qmail-udp
+## Description: Open the smtp port for cvm-qmail-udp.
+
+# space separated list of allowed UDP ports
+UDP="325"

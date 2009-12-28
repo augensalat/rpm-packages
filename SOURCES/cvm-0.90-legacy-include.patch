@@ -1,0 +1,13 @@
+--- INSTHIER 2006-09-06 22:41:57.000000000 +0000
++++ INSTHIER 2007-06-19 00:07:46.364577331 +0000
+@@ -1,7 +1,7 @@
+ >lib
+-s:::::libcvm-client.a:libcvm-v2client.a
+-s:::::libcvm-client.la:libcvm-v2client.la
+-s:::::libcvm-client.so:libcvm-v2client.so
++s:::::libcvm-client.a:libcvm-v1client.a
++s:::::libcvm-client.la:libcvm-v1client.la
++s:::::libcvm-client.so:libcvm-v1client.so
+ l:::755::libcvm-command.la
+ l:::755::libcvm-local.la
+ l:::755::libcvm-module.la

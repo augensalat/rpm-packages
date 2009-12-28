@@ -1,0 +1,5 @@
+## Name: mailfront-smtpd
+## Description: Open the smtp port for mailfront-smtpd.
+
+# space separated list of allowed TCP ports
+TCP="smtp"

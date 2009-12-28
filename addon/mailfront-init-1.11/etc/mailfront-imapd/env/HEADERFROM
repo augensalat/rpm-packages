@@ -1,0 +1,6 @@
+X-IMAP-Sender
+
+# For administrative and oversight purposes, the return address, $SENDER
+# will also be saved in the X-IMAP-Sender mail header.  This header gets
+# added to the sent E-mail (but it doesn't get saved in the copy of the
+# message that's saved in the folder)

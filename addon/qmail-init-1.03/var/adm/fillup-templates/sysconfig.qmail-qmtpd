@@ -1,0 +1,101 @@
+## Type:	ip
+## Default:	""
+## Command:	svc -t /service/qmail-qmtpd
+#
+# IP address the QMTP daemon should bind to on this host.
+# Default is "", which means to listen on all addresses of this host.
+#
+QMTP_ADDRESS="0"
+
+## Type:	string
+## Default:	"209"
+## Command:	svc -t /service/qmail-qmtpd
+#
+# Port number or name (from /etc/services) for the qmtp daemon.
+#
+QMTP_PORT="209"
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/qmail-qmtpd
+#
+# Set local hostname to keep tcpserver from looking it up in DNS.
+# Default is "", which means using the result of "hostname -f".
+# A common choice for localname is 0. To avoid loops, you must use this
+# option for servers on TCP port 53.
+#
+QMTP_LOCALNAME=""
+
+## Type:        integer
+## Default:     20
+## Command:	svc -t /service/qmail-qmtpd
+#
+# Maximum number of simultaneous qmtp daemon processes.
+#
+QMTP_CONCURRENCY="20"
+
+## Type:        integer
+## Default:     "0"
+## Command:	svc -t /service/qmail-qmtpd
+#
+# Maximum number of bytes allowed in a message, or "0" for no limit. If a
+# message exceeds this limit, qmtpd returns a permanent error code to
+# the client; in contrast, if the disk is full or qmtpd hits a resource
+# limit, qmtpd returns a temporary error code.
+
+# Counts bytes as stored on disk, not as transmitted through the network.
+# It does not count the qmtpd Received line, the qmail-queue Received
+# line, or the envelope.
+#
+QMTP_DATABYTES="0"
+
+## Type:        integer
+## Default:     10000000
+## Command:	svc -t /service/qmail-qmtpd
+#
+# Memory limit in bytes for daemon.
+# Important: You probably want to raise this limit significantly if you
+#            have an SSL enabled tcpserver!
+#
+QMTP_LIMIT="10000000"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail-qmtpd
+#
+# List of IP numbers or IP number ranges of hosts that can send their emails
+# through this QMTP daemon.
+# Examples for IP ranges: "192.168. 213.191.36.100-120 10.0.0-63."
+#
+QMTP_RELAYFROMIP=""
+
+## Type:	yesno
+## Default:	"no"
+## Command:	svc -t /service/qmail-qmtpd
+#
+# set to "yes" to enable recipient validation in qmtpd.
+#
+QMTP_CHKRCPT="no"
+
+## Type:        integer
+## Default:     99999
+## Command:	svc -t /service/qmail-qmtpd/log
+#
+# sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+QMTP_LOGSIZE="99999"
+
+## Type:	integer
+## Default:	10
+## Command:	svc -t /service/qmail-qmtpd/log
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+QMTP_LOGNUM="10"
+

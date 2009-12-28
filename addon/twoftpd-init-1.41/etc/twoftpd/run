@@ -1,0 +1,19 @@
+#!/bin/sh
+
+exec 2>&1
+umask 022
+
+if test -x /usr/share/twoftpd/create-config ; then
+    test /etc/sysconfig/twoftpd -nt ./env/ADDRESS && \
+	/usr/share/twoftpd/create-config
+fi
+
+exec envdir ./env sh -c '
+    test -s ./rules/data.cdb && tcprules="-x ./rules/data.cdb" || tcprules=""
+
+    exec \
+	${LIMIT:+softlimit -d $LIMIT} \
+	tcpserver -DHRv -c ${CONCURRENCY:-20} $tcprules ${ADDRESS:-0} ${PORT:-21} \
+	    twoftpd-auth ${CVM_AUTH:-"cvm-command:cvm-unix"} \
+	    twoftpd-xfer
+'

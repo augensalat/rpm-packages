@@ -1,0 +1,3 @@
+Alias /static/ /srv/www/cgit/htdocs/
+Alias /favicon.ico /srv/www/cgit/htdocs/favicon.ico
+ScriptAlias /cgit /srv/www/cgit/cgi-bin/cgit

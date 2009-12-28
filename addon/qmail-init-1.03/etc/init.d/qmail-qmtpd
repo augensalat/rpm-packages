@@ -1,0 +1,88 @@
+#! /bin/sh
+#
+# Author: Bernhard Graf <graf@movingtarget.de>
+#
+# init.d/qmail-qmtpd
+#
+#   and symbolic its link
+#
+# /usr/sbin/rcqmail-qmtpd
+#
+# System startup script for qmail-qmtpd
+#
+### BEGIN INIT INFO
+# Provides:		qmail-qmtpd
+# Required-Start:	$network $named $remote_fs qmail
+# Required-Stop:	$network $named $remote_fs qmail
+# Default-Start:	3 5
+# Default-Stop:		0 1 6
+# Description:		Start qmail-qmtpd
+### END INIT INFO
+
+test -L "/service/qmail-qmtpd" || exit 5
+
+# Shell functions sourced from /etc/rc.status
+. /etc/rc.status
+
+# First reset status of this service
+rc_reset
+
+case "$1" in
+    start)
+	echo -n "Starting qmail-qmtpd"
+	if svc-isdown 2>/dev/null qmail ; then
+	  echo -n " ... qmail not running - waiting 1s ..."
+	  sleep 1
+	  if svc-isdown 2>/dev/null qmail ; then
+	    rc_failed 5
+	    rc_status -v
+	    rc_exit
+	  fi
+	fi
+	svc-start qmail-qmtpd
+
+	# Remember status and be verbose
+	rc_status -v
+	;;
+    stop)
+	echo -n "Shutting down qmail-qmtpd"
+	svc-stop qmail-qmtpd
+
+	# Remember status and be verbose
+	rc_status -v
+	;;
+    try-restart)
+	## Stop the service and if this succeeds (i.e. the 
+	## service was running before), start it again.
+	$0 stop  &&  $0 start
+
+	# Remember status and be quiet
+	rc_status
+	;;
+    restart)
+	## Stop the service and regardless of whether it was
+	## running or not, start it again.
+	$0 stop
+	$0 start
+
+	# Remember status and be quiet
+	rc_status
+	;;
+    reload|force-reload)
+	## Signal the daemon to reload its config with svc -t .
+	echo -n "Reloading qmail-qmtpd"
+	## if it supports it:
+	svc -t /service/qmail-qmtpd
+
+	rc_status -v
+	;;
+    status)
+	echo -n "Checking for qmail-qmtpd: "
+	svc-status qmail-qmtpd
+	;;
+    *)
+	echo "Usage: $0 {start|stop|status|try-restart|restart|reload}"
+	exit 1
+	;;
+esac
+rc_exit

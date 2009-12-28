@@ -1,0 +1,63 @@
+--- src/ipccat.sh	2005-05-27 22:10:50.000000000 +0200
++++ src/ipccat.sh	2008-01-30 17:16:22.000000000 +0100
+@@ -1,2 +1,2 @@
+ test $# -ne 1 && { echo "ipccat: usage: ipccat path" >&2; exit 100; }
+-exec HOME/command/ipcclient -l0 -- "$1" sh -c 'exec cat <&6'
++exec ipcclient -l0 -- "$1" sh -c 'exec cat <&6'
+--- src/ipcconnect.sh	2005-05-27 22:10:50.000000000 +0200
++++ src/ipcconnect.sh	2008-01-30 17:16:22.000000000 +0100
+@@ -1,2 +1,2 @@
+ test $# -ne 1 && { echo "ipcconnect: usage: ipcconnect path" >&2; exit 100; }
+-exec HOME/command/ipcclient -l0 -- "$1" HOME/command/ipcconnect-io
++exec ipcclient -l0 -- "$1" ipcconnect-io
+--- src/ipcdo.sh	2005-05-27 22:10:50.000000000 +0200
++++ src/ipcdo.sh	2008-01-30 17:16:22.000000000 +0100
+@@ -5,4 +5,4 @@
+ user="${1-root}"
+ user=`id -u "$user"`
+ shift
+-exec HOME/command/ipcclient -l0 IPCEXEC/s HOME/command/ipccommand "$user" "$@"
++exec ipcclient -l0 IPCEXEC/s ipccommand "$user" "$@"
+--- src/ipcexec-config.c	2005-05-27 22:10:50.000000000 +0200
++++ src/ipcexec-config.c	2008-01-30 17:16:22.000000000 +0100
+@@ -4,7 +4,6 @@
+ #include <pwd.h>
+ #include "strerr.h"
+ #include "exit.h"
+-#include "auto_home.h"
+ #include "generic-conf.h"
+ #include "fmt.h"
+ 
+@@ -50,7 +49,7 @@
+   outs("#!/bin/sh\nexec 2>&1\nexec envdir "); outs(dir);
+   outs("/env sh -c '\nexec envuidgid "); outs(user);
+   outs(" ipcserver -v "); outs(dir); outs("/s \\\n");
+-  outs(auto_home); outs("/command/ipcexec \\\n");
++  outs("ipcexec \\\n");
+   outs(dir); outs("/rules/data.cdb\n'\n");
+   finish();
+   perm(0755);
+--- src/ipcrun.sh	2005-05-27 22:10:50.000000000 +0200
++++ src/ipcrun.sh	2008-01-30 17:16:22.000000000 +0100
+@@ -2,4 +2,4 @@
+   echo "ipcrun: usage: ipcrun prog" >&2
+   exit 100;
+ }
+-exec HOME/command/ipcclient -l0 IPCEXEC/s HOME/command/ipccommand 0 "$@"
++exec ipcclient -l0 IPCEXEC/s ipccommand 0 "$@"
+--- src/Makefile	2005-05-27 22:10:50.000000000 +0200
++++ src/Makefile	2008-01-30 17:17:15.000000000 +0100
+@@ -277,10 +277,10 @@
+ ipcexec: load ipcexec.o unix.a
+ 	./load ipcexec unix.a 
+ 
+-ipcexec-config: load ipcexec-config.o unix.a auto_home.o
+-	./load ipcexec-config unix.a auto_home.o 
++ipcexec-config: load ipcexec-config.o unix.a
++	./load ipcexec-config unix.a
+ 
+-ipcexec-config.o: compile ipcexec-config.c strerr.h exit.h auto_home.h \
++ipcexec-config.o: compile ipcexec-config.c strerr.h exit.h \
+ generic-conf.h fmt.h buffer.h
+ 	./compile ipcexec-config.c
+ 

@@ -1,0 +1,11 @@
+# who fails the greetdelay trap or retries blindly is rejected to the infinite
+100 b greetdelay retryinterval
+# dnsblenv sets the BLACKLISTED variable when the client is on a RBL
+# 6 v BLACKLISTED
+# clients w/o a PTR name are suspicious
+3 v ! TCPREMOTEHOST
+# clients whose PTR name contains "dynamic" stuff are suspicious
+2 r (([0-9]{1,3}[-.]){3})[0-9]{1,3}
+3 r (^|[^a-z])(a?dsl|dyn(amic)?(ip)?|dial(in|up)?|ppp|customer|user|host|home)([^a-z]|\.?$)
+# clients outside this zone are suspicious (this is very case-specific)
+3 g ! AT BE CH CZ DE DK ES EU FI FR GB IE IT JP LU MC NL NO PO SE SM VA

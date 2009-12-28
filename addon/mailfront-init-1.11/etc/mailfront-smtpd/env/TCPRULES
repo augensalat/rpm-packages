@@ -1,0 +1,3 @@
+/etc/tcpcontrol/smtp.cdb
+
+Name of the SMTP tcpcontrol CDB file for access control

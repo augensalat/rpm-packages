@@ -1,0 +1,5 @@
+## Name: qmail-qmtpd
+## Description: Open the qmtp port for qmail.
+
+# space separated list of allowed TCP ports
+TCP="qmtp"

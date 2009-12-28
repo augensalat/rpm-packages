@@ -1,0 +1,4 @@
+
+
+Restrict message size by supplying a positive integer value in the first
+line as the maximum message size in bytes. No value means no limit.

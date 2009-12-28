@@ -1,0 +1,12 @@
+0
+
+# Set IMAP_DISABLETHREADSORT to disable the THREAD and SORT commands -
+# server side sorting and threading.
+#
+# Those capabilities will still be advertised, but the server will reject
+# them.  Set this option if you want to disable all the extra load from
+# server-side threading and sorting.  Not advertising those capabilities
+# will simply result in the clients reading the entire folder, and sorting
+# it on the client side.  That will still put some load on the server.
+# advertising these capabilities, but rejecting the commands, will stop this
+# silliness.

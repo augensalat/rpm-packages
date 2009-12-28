@@ -1,0 +1,11 @@
+## Path:        Network/Mail/mailfront
+## Description: Basic configuration of the mailfront network front-ends
+## Type:        yesno
+## Default:     "yes"
+#
+# Configuration file generation from the settings here is disabled, if
+# either MAILFRONT_CREATE_CONFIG="no" or in /etc/sysconfig/mail
+# MAIL_CREATE_CONFIG="no" .
+#
+MAILFRONT_CREATE_CONFIG="yes"
+

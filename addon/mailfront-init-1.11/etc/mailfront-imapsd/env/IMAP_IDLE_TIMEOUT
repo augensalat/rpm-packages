@@ -1,0 +1,4 @@
+60
+
+If you want to try out the IDLE extension, this setting controls how often
+the server polls for changes to the folder, in IDLE mode (in seconds).

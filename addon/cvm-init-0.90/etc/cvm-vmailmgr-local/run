@@ -1,0 +1,11 @@
+#!/bin/sh
+
+exec 2>&1
+
+test -x /usr/share/cvm/create-config-cvm-vmailmgr-local -a /etc/sysconfig/cvm -nt ./env/SOCKET && \
+	/usr/share/cvm/create-config-cvm-vmailmgr-local
+
+exec envdir ./env sh -c '
+    exec ${LIMIT:+softlimit -m $LIMIT} \
+	cvm-vmailmgr cvm-local:${SOCKET:-/var/run/cvm-vmailmgr}
+'

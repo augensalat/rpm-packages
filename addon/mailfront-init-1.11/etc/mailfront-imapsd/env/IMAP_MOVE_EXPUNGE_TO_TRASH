@@ -1,0 +1,9 @@
+0
+
+# Set IMAP_MOVE_EXPUNGE_TO_TRASH to move expunged messages to Trash.  This
+# effectively allows an undo of message deletion by fishing the deleted
+# mail from trash.  Trash can be manually expunged as usually, and mail
+# will get automatically expunged from Trash according to IMAP_EMPTYTRASH.
+#
+# NOTE: shared folders are still expunged as usual.  Shared folders are
+# not affected.

@@ -1,0 +1,375 @@
+## Type:        ip
+## Default:     ""
+## Command:	svc -t /service/mailfront-imapsd
+#
+# IP address the IMAPS daemon should bind to on this host.
+# Default is "", which means to listen on all addresses of this host.
+#
+IMAPS_ADDRESS=""
+
+## Type:        string
+## Default:     "993"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Port number or name (from /etc/services) for the imaps daemon.
+#
+IMAPS_PORT="993"
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Set local hostname to keep tcpserver from looking it up in DNS.
+# Default is "", which means using the result of "hostname -f".
+# A common choice for localname is 0. To avoid loops, you must use this
+# option for servers on TCP port 53.
+#
+IMAPS_LOCALNAME=""
+
+## Type:        integer
+## Default:     40
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Maximum number of simultaneous imap daemon processes.
+#
+IMAPS_CONCURRENCY="40"
+
+## Type:        integer
+## Default:     70000000
+## Command:	svc -t /service/mailfront-imapsd
+#
+# This feature is used as an additional safety check that should stop
+# any potential denial-of-service attacks that exploit any kind of
+# a memory leak to exhaust all the available memory on the server.
+# It is theoretically possible that obscenely huge folders will also
+# result in the server running out of memory when doing server-side
+# sorting (by my calculations you have to have at least 100,000 messages
+# in a single folder, for that to happen).
+#
+IMAPS_LIMIT="70000000"
+
+## Type:        string
+## Default:     "/etc/mailfront-imapsd/ssl/certificate.pem"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Path to PEM formatted SSL certificate file.
+# If no such file exists, the start routine will try to create a
+# self-signed certificate. Before that happens you probably want to edit
+# the certificate config file /etc/mailfront-imapsd/ssl/openssl.cnf.
+#
+IMAPS_CERTFILE="/etc/mailfront-imapsd/ssl/certificate.pem"
+
+## Type:        string
+## Default:     "/etc/mailfront-imapsd/ssl/privatekey.pem"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Path to PEM formatted SSL private key file.
+# If no such file exists, the start routine will try to create a private
+# key.
+#
+IMAPS_KEYFILE="/etc/mailfront-imapsd/ssl/privatekey.pem"
+
+## Type:        string
+## Default:     "/etc/mailfront-imapsd/ssl/dh1024.pem"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Path to Diffie-Hellman-Parameter file.
+# If this is empty, sslserver will try to use the built-in path to
+# a DH-Parameter file.
+#
+IMAPS_DHFILE="/etc/mailfront-imapsd/ssl/dh1024.pem"
+
+## Type:        integer
+## Default:     1200
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Connections are timed out after $IMAPS_TIMEOUT seconds of inactivity.
+#
+IMAPS_TIMEOUT="1200"
+
+## Type:        integer
+## Default:     86400
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Times out seconds after the connection was established.
+#
+IMAPS_SESSION_TIMEOUT="86400"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Space separated list of IP numbers or IP number ranges of hosts that
+# can connect to our IMAP daemon.
+# Examples for IP ranges: "192.168. 213.191.36.100-120 10.0.0-63."
+# Access from any IP is granted if left empty.
+#
+IMAPS_ALLOWFROMIP=""
+
+## Type:        list(command,local,udp)
+## Default:     "command"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Contact mode to Credential Validation Modules.
+# Values of "command" and "local" require the CVM module to be installed
+# on the same host. Values of "local" and "udp" require a running CVM
+# authentication module at the location provided by the IMAPS_CVM_LOCATION
+# variable.
+#
+IMAPS_CVM_MODE="command"
+
+## Type:        string
+## Default:     "cvm-unix"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Meaning depends on value of $IMAPS_CVM_MODE:
+# $IMAPS_CVM_MODE=="command": Path to authentication CVM module. 
+# $IMAPS_CVM_MODE=="local": Path to unix socket file.
+# $IMAPS_CVM_MODE=="udp": "host:port"
+#
+IMAPS_CVM_LOCATION="cvm-unix"
+
+## Type:        integer
+## Default:     99999
+## Command:	svc -t /service/mailfront-imapsd/log
+#
+# sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+IMAPS_LOGSIZE="99999"
+
+## Type:	integer
+## Default:	10
+## Command:	svc -t /service/mailfront-imapsd/log
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+IMAPS_LOGNUM="10"
+
+## Type:	string
+## Default:	"IMAP4rev1 CHILDREN NAMESPACE THREAD=ORDEREDSUBJECT THREAD=REFERENCES SORT QUOTA AUTH=PLAIN"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# IMAPS_CAPABILITY specifies what most of the response should be to the
+# CAPABILITY command.
+#
+IMAPS_CAPABILITY="IMAP4rev1 CHILDREN NAMESPACE THREAD=ORDEREDSUBJECT THREAD=REFERENCES SORT QUOTA AUTH=PLAIN"
+
+## Type:        yesno
+## Default:     "yes"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# IMAPS_KEYWORDS="yes" enables custom IMAP keywords.
+# Set this option to "NO" to disable custom keywords.
+#
+IMAPS_KEYWORDS="yes"
+
+## Type:        yesno
+## Default:     "yes"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# IMAPS_ACL="yes" enables IMAP ACL extension.
+# Set this option to "NO" to disable ACL capabilities announce.
+# 
+IMAPS_ACL="yes"
+
+## Type:        integer
+## Default:     60
+## Command:	svc -t /service/mailfront-imapsd
+#
+# If you want to try out the IDLE extension, this setting controls how often
+# the server polls for changes to the folder, in IDLE mode (in seconds).
+#
+IMAPS_IDLE_TIMEOUT="60"
+
+## Type:        yesno
+## Default:     "no"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Set IMAPS_DISABLETHREADSORT to disable the THREAD and SORT commands -
+# server side sorting and threading.
+#
+# Those capabilities will still be advertised, but the server will reject
+# them.  Set this option if you want to disable all the extra load from
+# server-side threading and sorting.  Not advertising those capabilities
+# will simply result in the clients reading the entire folder, and sorting
+# it on the client side.  That will still put some load on the server.
+# advertising these capabilities, but rejecting the commands, will stop this
+# silliness.
+#
+IMAPS_DISABLETHREADSORT="no"
+
+## Type:        yesno
+## Default:     "no"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Set IMAPS_CHECK_ALL_FOLDERS to 1 if you want the server to check for new
+# mail in every folder.  Not all IMAP clients use the IMAP's new mail
+# indicator, but some do.  Normally new mail is checked only in INBOX,
+# because it is a comparatively time consuming operation, and it would be
+# a complete waste of time unless mail filters are used to deliver
+# mail directly to folders.
+#
+# When IMAP clients are used which support new mail indication, and when
+# mail filters are used to sort incoming mail into folders, setting
+# IMAPS_CHECK_ALL_FOLDERS to 1 will allow IMAP clients to announce new
+# mail in folders.  Note that this will result in slightly more load on the
+# server.
+#
+IMAPS_CHECK_ALL_FOLDERS="no"
+
+## Type:        yesno
+## Default:     "no"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Set IMAPS_OBSOLETE_CLIENT if your IMAP client expects \\NoInferiors to mean
+# what \\HasNoChildren really means.
+#
+IMAPS_OBSOLETE_CLIENT="no"
+
+## Type:        yesno
+## Default:     "no"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Set IMAPS_USELOCKS to 1 if you experience weird problems when using IMAP
+# clients that open multiple connections to the server.  I would hope that
+# most IMAP clients are sane enough not to issue commands to multiple IMAP
+# channels which conflict with each other.
+#
+IMAPS_USELOCKS="no"
+
+## Type:        yesno
+## Default:     "no"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# If Courier was compiled with the File Alteration Monitor, setting
+# IMAPS_ENHANCEDIDLE to 1 enables enhanced IDLE mode, where multiple
+# clients may open the same folder concurrently, and receive updates to
+# folder contents in realtime.  See the imapd(8) man page for additional
+# information.
+#
+# IMPORTANT: IMAPS_USELOCKS *MUST* also be set to "yes", and IDLE must be included
+# in the IMAPS_CAPABILITY list.
+#
+IMAPS_ENHANCEDIDLE="no"
+
+## Type:        string
+## Default:     "Trash"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# The name of the magic trash Folder.  For MSOE compatibility,
+# you can set IMAPS_TRASHFOLDERNAME="Deleted Items".
+#
+# IMPORTANT:  If you change this, you must also change IMAPS_EMPTYTRASH
+#
+IMAPS_TRASHFOLDERNAME="Trash"
+
+## Type:        string
+## Default:     "Trash:7"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# This setting is optional, and causes messages from the given folder to
+# be automatically deleted after the given number of days.
+# IMAPS_EMPTYTRASH is a comma-separated list of folder:days.  The default
+# setting, above, purges 7 day old messages from the Trash folder.
+# Another useful setting would be:
+#
+# IMAPS_EMPTYTRASH=Trash:7,Sent:30
+#
+# This would also delete messages from the Sent folder (presumably copies
+# of sent mail) after 30 days.  This is a global setting that is applied to
+# every mail account, and is probably useful in a controlled, corporate
+# environment.
+#
+# Important: the purging is controlled by CTIME, not MTIME (the file time
+# as shown by ls).  It is perfectly ordinary to see stuff in Trash that's
+# a year old.  That's the file modification time, MTIME, that's displayed.
+# This is generally when the message was originally delivered to this
+# mailbox.  Purging is controlled by a different timestamp, CTIME, which is
+# changed when the file is moved to the Trash folder (and at other times too).
+#
+# You might want to disable this setting in certain situations - it results
+# in a stat() of every file in each folder, at login and logout.
+#
+IMAPS_EMPTYTRASH="Trash:7"
+
+## Type:        yesno
+## Default:     "no"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Set IMAPS_MOVE_EXPUNGE_TO_TRASH to move expunged messages to Trash.  This
+# effectively allows an undo of message deletion by fishing the deleted
+# mail from trash.  Trash can be manually expunged as usually, and mail
+# will get automatically expunged from Trash according to IMAPS_EMPTYTRASH.
+#
+# NOTE: shared folders are still expunged as usual.  Shared folders are
+# not affected.
+#
+IMAPS_MOVE_EXPUNGE_TO_TRASH="no"
+
+## Type:        yesno
+## Default:     "no"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# The next set of options deal with the "Outbox" enhancement.
+# Set to "yes" to create a special folder, named INBOX.$IMAPS_OUTBOX_NAME
+# (see IMAPS_OUTBOX_NAME to set the name of the outbox).
+#
+IMAPS_OUTBOX_ENHANCEMENT="no"
+
+## Type:        string
+## Default:     ".Outbox"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# The next set of options deal with the "Outbox" enhancement.
+# Name the special folder, named INBOX.Outbox
+#
+IMAPS_OUTBOX_NAME=".Outbox"
+
+## Type:        string
+## Default:     "X-IMAP-Sender"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# For administrative and oversight purposes, the return address, $SENDER
+# will also be saved in the X-IMAP-Sender mail header.  This header gets
+# added to the sent E-mail (but it doesn't get saved in the copy of the
+# message that's saved in the folder)
+#
+IMAPS_HEADERFROM="X-IMAP-Sender"
+
+## Type:        yesno
+## Default:     "no"
+## Command:	svc -t /service/mailfront-imapsd
+#
+# Remove the following comment to allow a COPY of more than one message to
+# the Outbox, at a time.
+#
+IMAPS_OUTBOX_MULTIPLE_SEND="no"
+
+## Type:        integer(4096:16777215)
+## Default:     99999
+## Command:	svc -t /service/mailfront-imapsd/log
+#
+# sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+IMAPS_LOGSIZE="99999"
+
+## Type:	integer(2:)
+## Default:	10
+## Command:	svc -t /service/mailfront-imapsd/log
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+IMAPS_LOGNUM="10"
+

@@ -1,0 +1,140 @@
+## Path:        Network/FTP/twoftpd
+## Description: Basic configuration of the TwoFTPd ftp server
+## Type:        yesno
+## Default:     "yes"
+#
+# Configuration file generation from the settings here is disabled, if
+# TWOFTPD_CREATE_CONFIG="no".
+#
+TWOFTPD_CREATE_CONFIG="yes"
+
+## Type:	string
+## Default:	""
+#
+# Address to which twoftpd should bind to.
+# Default is to bind to all available network interfaces
+#
+TWOFTPD_ADDRESS=""
+
+## Type:	string
+## Default:	"21"
+#
+# Port number or name (from /etc/services) for twoftpd
+#
+TWOFTPD_PORT="21"
+
+## Type:        integer
+## Default:     20
+#
+# Maximum number of concurrent tcp connections to the server.
+# Further connections are being delayed until the number of
+# connections drops below this limit.
+#
+TWOFTPD_CONCURRENCY="20"
+
+## Type:        integer
+## Default:     10000000
+#
+# Limit data and stack segment, locked physical pages and total of all
+# segments per process to n bytes each.
+#
+TWOFTPD_LIMIT="10000000"
+
+## Type:        yesno
+## Default:     "yes"
+#
+# Chroot to authenticated FTP directory.
+# Do not disable unless you really know what you do!
+#
+TWOFTPD_CHROOT="yes"
+
+## Type:        integer
+## Default:     900
+#
+# Number of seconds twoftpd will wait for each new buffer of data
+# from the remote FTP client.
+#
+TWOFTPD_TIMEOUT="900"
+
+## Type:        integer
+## Default:     86400
+#
+# Times out seconds after the connection was established
+#
+TWOFTPD_SESSION_TIMEOUT="86400"
+
+## Type:        integer
+## Default:     86400
+#
+# timeout in secconds in authentication phase
+#
+TWOFTPD_AUTH_TIMEOUT="60"
+
+## Type:        yesno
+## Default:     "yes"
+#
+# Log all client requests
+#
+TWOFTPD_LOGREQUESTS="yes"
+
+## Type:	yesno
+## Default:	"yes"
+#
+# Log all server responses
+# 
+TWOFTPD_LOGRESPONSES="yes"
+
+## Type:	yesno
+## Default:	"no"
+#
+# Don't show dot files if this is set to "yes"
+# 
+TWOFTPD_NODOTFILES="no"
+
+## Type:        list(command,local,udp)
+## Default:     "command"
+#
+# Contact mode to Credential Validation Modules.
+# Values of "command" and "local" require CVM to be installed on the same host.
+# Values of "local" and "udp" require a running CVM authentication module at
+# the location provided by the CVM_LOCATION variable.
+#
+TWOFTPD_CVM_MODE="command"
+
+## Type:        string
+## Default:     "cvm-unix"
+#
+# Location of authentication CVM module. Either a filename
+# (MAILFRONT_CVM_MODE="command|local") or "hostname:port" for
+# MAILFRONT_CVM_MODE="udp".
+#
+TWOFTPD_CVM_LOCATION="cvm-unix"
+
+## Type:	string
+## Default:	""
+#
+# Configuration Variables for CVM
+# Format: "key1=value1 key2=value2"
+#
+TWOFTPD_CVM_ENVIRONMENT=""
+
+## Type:	integer
+## Default:	99999
+#
+# sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+TWOFTPD_LOGSIZE="99999"
+
+## Type:	integer
+## Default:	10
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+TWOFTPD_LOGNUM="10"
+

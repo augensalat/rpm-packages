@@ -1,0 +1,24 @@
+Trash:7
+
+# This setting is optional, and causes messages from the given folder to
+# be automatically deleted after the given number of days.
+# IMAP_EMPTYTRASH is a comma-separated list of folder:days.  The default
+# setting, above, purges 7 day old messages from the Trash folder.
+# Another useful setting would be:
+#
+# IMAP_EMPTYTRASH=Trash:7,Sent:30
+#
+# This would also delete messages from the Sent folder (presumably copies
+# of sent mail) after 30 days.  This is a global setting that is applied to
+# every mail account, and is probably useful in a controlled, corporate
+# environment.
+#
+# Important: the purging is controlled by CTIME, not MTIME (the file time
+# as shown by ls).  It is perfectly ordinary to see stuff in Trash that's
+# a year old.  That's the file modification time, MTIME, that's displayed.
+# This is generally when the message was originally delivered to this
+# mailbox.  Purging is controlled by a different timestamp, CTIME, which is
+# changed when the file is moved to the Trash folder (and at other times too).
+#
+# You might want to disable this setting in certain situations - it results
+# in a stat() of every file in each folder, at login and logout.

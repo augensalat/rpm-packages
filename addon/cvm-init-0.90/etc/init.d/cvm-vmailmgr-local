@@ -1,0 +1,91 @@
+#! /bin/sh
+#
+# Author: Bernhard Graf <graf@movingtarget.de>
+#
+# /etc/init.d/cvm-vmailmgr-local
+#
+#   and symbolic its link
+#
+# /usr/sbin/rccvm-vmailmgr-local
+#
+# System startup script for cvm-vmailmgr-local
+#
+### BEGIN INIT INFO
+# Provides:		cvm-vmailmgr-local
+# Required-Start:	$remote_fs
+# Required-Stop:
+# Default-Start:	2 3 5
+# Default-Stop:		0 1 6
+# Description:		Start cvm-vmailmgr-local
+### END INIT INFO
+
+test -L /service/cvm-vmailmgr-local || exit 5
+
+# Shell functions sourced from /etc/rc.status
+. /etc/rc.status
+
+# First reset status of this service
+rc_reset
+
+case "$1" in
+    start)
+	echo -n "Starting cvm-vmailmgr-local"
+	svc-start cvm-vmailmgr-local
+	rc_status -v
+	if test -L /service/cvm-vmlookup-local ; then
+	    echo -n "Starting cvm-vmlookup-local"
+	    svc-start cvm-vmlookup-local
+	    rc_status -v
+	fi
+	;;
+    stop)
+	echo -n "Shutting down cvm-vmailmgr-local"
+	svc-stop cvm-vmailmgr-local
+	rc_status -v
+	if test -L /service/cvm-vmlookup-local ; then
+	    echo -n "Shutting down cvm-vmlookup-local"
+	    svc-stop cvm-vmlookup-local
+	    rc_status -v
+	fi
+	;;
+    try-restart)
+	## Stop the service and if this succeeds (i.e. the 
+	## service was running before), start it again.
+	$0 stop  &&  $0 start
+
+	# Remember status and be quiet
+	rc_status
+	;;
+    restart)
+	## Stop the service and regardless of whether it was
+	## running or not, start it again.
+	$0 stop
+	$0 start
+
+	# Remember status and be quiet
+	rc_status
+	;;
+    reload|force-reload)
+	## Signal the daemon to reload its config with svc -t .
+	echo -n "Reloading cvm-vmailmgr-local"
+	svc -t /service/cvm-vmailmgr-local
+	rc_status -v
+	if test -L /service/cvm-vmlookup-local ; then
+	    echo -n "Reloading cvm-vmlookup-local"
+	    svc -t /service/cvm-vmlookup-local
+	    rc_status -v
+	fi
+	;;
+    status)
+	echo -n "Checking for cvm-vmailmgr-local: "
+	svc-status cvm-vmailmgr-local
+	if test -L /service/cvm-vmlookup-local ; then
+	    svc-status cvm-vmlookup-local
+	fi
+	;;
+    *)
+	echo "Usage: $0 {start|stop|status|try-restart|restart|reload}"
+	exit 1
+	;;
+esac
+rc_exit

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+exec 2>&1
+
+if test -x /usr/share/mailfront/create-config-mailfront-imapd ; then
+    test /etc/sysconfig/mailfront -nt ./env/ADDRESS -o /etc/sysconfig/mail -nt ./env/ADDRESS && \
+	/usr/share/mailfront/create-config-mailfront-imapd
+fi
+
+exec envdir ./env sh -c '
+    test -s ./rules/data.cdb && tcprules="-x ./rules/data.cdb" || tcprules=""
+
+    IMAP_SHAREDINDEXFILE=/etc/courier-imap/shared/index \
+    COURIERTLS=/usr/sbin/couriertls \
+    TLS_CERTFILE=/etc/courier-imap/imapd.pem \
+    TLS_VERIFYPEER=NONE \
+    exec \
+	${LIMIT:+softlimit -d $LIMIT} \
+	tcpserver -DHRv -c ${CONCURRENCY:-40} -l ${LOCALNAME:-$(head -1 /var/qmail/control/me)} \
+	    $tcprules ${ADDRESS:-0} ${PORT:-143} \
+	imapfront-auth \
+	imapd
+'

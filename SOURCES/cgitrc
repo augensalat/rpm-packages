@@ -1,0 +1,73 @@
+#
+# See /usr/share/doc/cgit-*/cgitrc.5.txt for details
+#
+
+# Enable caching of up to 1000 output entries
+cache-size=1000
+
+# Specify some default clone prefixes
+#clone-prefix=git://example.com ssh://example.com/pub/git http://example.com/git
+
+# Specify the css url
+css=/static/cgit.css
+
+# Show extra links for each repository on the index page
+enable-index-links=1
+
+# Show number of affected files per commit on the log pages
+enable-log-filecount=1
+
+# Show number of added/removed lines per commit on the log pages
+enable-log-linecount=1
+
+# Add a cgit favicon
+favicon=/favicon.ico
+
+# include content of the file verbatim in the html HEAD section on all pages
+#head-include=/usr/share/cgit/include/head.html
+
+# print commit and tag times in the server's timezone
+local-time=1
+
+# Use a custom logo
+logo=/static/cgit.png
+
+# default maximum statistics period (week|month|quarter|year)
+max-stats=year
+
+# Set the title and heading of the repository index page
+#root-title=example.com git repositories
+
+# Set a subheading for the repository index page
+#root-desc=tracking the foobar development
+
+# Include some more info about this site on the index page
+#root-readme=/srv/www/cgit/htdocs/about.html
+
+# Allow download of tar.gz, tar.bz2 and zip-files
+#snapshots=tar.gz tar.bz2 zip
+
+# command which will be invoked to format plaintext blobs in the tree view
+#source-filter=/usr/share/cgit/filters/syntax-highlighting.sh
+
+# Url which will be used as root for all cgit links. It will also cause
+# cgit to generate 'virtual urls', i.e. urls like
+# '/cgit/tree/README' as opposed to '?r=cgit&p=tree&path=README'.
+# NOTE: cgit has recently learned how to use PATH_INFO to achieve the
+# same kind of virtual urls, so this option will probably be deprecated.
+virtual-root=/
+
+##
+## List of repositories.
+## PS: Any repositories listed when repo.group is unset will not be
+##     displayed under a group heading
+## PPS: This list could be kept in a different file (e.g. '/etc/cgitrepos')
+##      and included like this:
+##        include=/etc/cgitrepos
+##
+
+#repo.url=foo
+#repo.path=/srv/gitosis/repositories/foo.git
+#repo.desc=the master foo repository
+#repo.owner=fooman@example.com
+#repo.readme=info/web/about.html

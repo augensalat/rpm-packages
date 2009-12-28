@@ -1,0 +1,26 @@
+#!/bin/sh
+
+exec 2>&1
+
+exec envdir ./env sh -c '
+    if test -x /usr/share/mailfront/create-config-mailfront-smtpsd ; then
+	test /etc/sysconfig/mailfront -nt ./env/ADDRESS \
+		-o /etc/sysconfig/mail -nt ./env/ADDRESS \
+		-o ! -s "$CERTFILE" -o ! -s "$KEYFILE" && \
+	    /usr/share/mailfront/create-config-mailfront-smtpsd
+    fi
+
+    test -s ./rules/data.cdb && tcprules="-x ./rules/data.cdb" || tcprules=""
+
+    plugins="check-fqdn"
+    test -n "$DATABYTES" -o -n "$MAXRCPTS" && plugins="$plugins counters"
+    test -n "$MAILRULES" -a -f "$MAILRULES" && plugins="$plugins mailrules"
+    plugins="$plugins require-auth relayclient accept-sender"
+
+    exec \
+	${LIMIT:+softlimit -d $LIMIT} \
+	envuidgid qmaild \
+	sslserver -DRUaev -c ${CONCURRENCY:-20} -l ${LOCALNAME:-$(head -1 /var/qmail/control/me)} \
+		$tcprules ${ADDRESS:-0} ${PORT:-465} \
+	mailfront smtp qmail ${plugins}
+'

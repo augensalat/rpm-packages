@@ -1,0 +1,154 @@
+## Type:	ip
+## Default:	""
+## Command:	svc -t /service/mailfront-submissiond
+#
+# Address the SMTP daemon should bind to on this host.
+# Default is "", which means to listen on all addresses of this host.
+# IMPORTANT: If you are running SMTP server and SMTP relay on the same host,
+#            you must either assign particular IP addresses to each daemon
+#            or assign a different port number (e.g. 587) to the relay.
+#
+SUBMISSION_ADDRESS=""
+
+## Type:	string
+## Default:	"587"
+## Command:	svc -t /service/mailfront-submissiond
+#
+# Port number or name (from /etc/services) for the submission daemon.
+#
+SUBMISSION_PORT="587"
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/mailfront-submissiond
+#
+# Set local hostname to keep tcpserver from looking it up in DNS.
+# Default is "", which means using the result of "hostname -f".
+# A common choice for localname is 0. To avoid loops, you must use this
+# option for servers on TCP port 53.
+#
+SUBMISSION_LOCALNAME=""
+
+## Type:	integer
+## Default:	20
+## Command:	svc -t /service/mailfront-submissiond
+#
+# Maximum number of simultaneous submission daemon processes.
+#
+SUBMISSION_CONCURRENCY="20"
+
+## Type:	integer
+## Default:	20000000
+## Command:	svc -t /service/mailfront-submissiond
+#
+# Memory limit in bytes for daemon.
+# Important: You probably want to raise this limit significantly if you
+#            have an SSL enabled tcpserver!
+#
+SUBMISSION_LIMIT="20000000"
+
+## Type:	integer
+## Default:	120
+## Command:	svc -t /service/mailfront-submissiond
+#
+# Number of seconds submissiond will wait for each new buffer of data
+# from the remote SMTP client.
+#
+SUBMISSION_TIMEOUT="120"
+
+## Type:	integer
+## Default:	3600
+## Command:	svc -t /service/mailfront-submissiond
+#
+# Times out seconds after the connection was established
+#
+SUBMISSION_SESSION_TIMEOUT="3600"
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/mailfront-submissiond
+#
+# Space separated list of IP numbers or IP number ranges of hosts that
+# can connect to our SMTP submission daemon.
+# Examples for IP ranges: "192.168. 213.191.36.100-120 10.0.0-63."
+# Access from any IP is granted if left empty.
+#
+SUBMISSION_ALLOWFROMIP=""
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/mailfront-submissiond
+#
+# SMTP greeting string.
+# Defaults to "<hostname> mailfront"
+#
+SUBMISSION_GREETING=""
+
+## Type:	integer
+## Default:	"0"
+## Command:	svc -t /service/mailfront-submissiond
+#
+# Maximum number of bytes allowed in a message, or "0" for no limit. If a
+# message exceeds this limit, submissiond returns a permanent error code to
+# the client; in contrast, if the disk is full or submissiond hits a resource
+# limit, submissiond returns a temporary error code.
+
+# Counts bytes as stored on disk, not as transmitted through the network.
+# It does not count the smtpd Received line, the qmail-queue Received
+# line, or the envelope.
+#
+SUBMISSION_DATABYTES="0"
+
+## Type:	integer
+## Default:	0
+## Command:	svc -t /service/mailfront-submissiond
+#
+# Clients are disconnected if they send more than the specified number
+# of commands that result in a "500 Not implemented." error.
+#
+SUBMISSION_MAXNOTIMPL="0"
+
+## Type:	list(command,local,udp)
+## Default:	"command"
+## Command:	svc -t /service/mailfront-submissiond
+#
+# Contact mode to Credential Validation Modules.
+# Values of "command" and "local" require CVM to be installed on the same host.
+# Values of "local" and "udp" require a running CVM authentication module at
+# the location provided by the CVM_LOCATION variable.
+#
+SUBMISSION_CVM_MODE="command"
+
+## Type:	string
+## Default:	"cvm-unix"
+## Command:	svc -t /service/mailfront-submissiond
+#
+# Meaning depends on value of $SUBMISSION_CVM_MODE:
+# $SMTP_CVM_MODE=="command": Path to authentication CVM module.
+# $SMTP_CVM_MODE=="local": Path to unix socket file.
+# $SMTP_CVM_MODE=="udp": "host:port"
+#
+SUBMISSION_CVM_LOCATION="cvm-unix"
+
+## Type:	integer(4096:16777215)
+## Default:	99999
+## Command:	svc -t /service/mailfront-submissiond/log
+#
+# sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+SUBMISSION_LOGSIZE="99999"
+
+## Type:	integer(2:)
+## Default:	10
+## Command:	svc -t /service/mailfront-submissiond/log
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+SUBMISSION_LOGNUM="10"
+

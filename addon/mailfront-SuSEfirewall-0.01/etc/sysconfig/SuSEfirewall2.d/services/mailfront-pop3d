@@ -1,0 +1,5 @@
+## Name: mailfront-pop3d
+## Description: Open the pop3 port for mailfront-pop3d.
+
+# space separated list of allowed TCP ports
+TCP="pop3"

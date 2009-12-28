@@ -1,0 +1,2 @@
+/etc/twoftpd/env	root.root	0700
+/var/log/twoftpd	twoftpd.twoftpd	0700

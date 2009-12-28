@@ -1,0 +1,56 @@
+## Type:	ip
+## Default:	""
+## Command:	svc -t /service/cvm-qmail-udp
+#
+# Address to which cvm-qmail-udp should bind to.
+# Default is to bind to all available network interfaces
+#
+CVM_QMAIL_UDP_ADDRESS=""
+
+## Type:	string
+## Default:	"325"
+## Command:	svc -t /service/cvm-qmail-udp
+#
+# Port number or name (from /etc/services) for cvm-qmail-udp
+#
+CVM_QMAIL_UDP_PORT="325"
+
+## Type:        integer
+## Default:     20000000
+## Command:	svc -t /service/cvm-qmail-udp
+#
+# Limit the data, stack segment, locked physical pages and total of all segments
+# per process to n bytes
+#
+CVM_QMAIL_UDP_LIMIT="20000000"
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/cvm-qmail-udp
+#
+# If lookup'ed data must be encrypted before piped through a socket
+#
+CVM_QMAIL_UDP_SECRET=""
+
+## Type:        integer
+## Default:     99999
+## Command:	svc -t /service/cvm-qmail-udp/log
+#
+# Sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+CVM_QMAIL_UDP_LOGSIZE="99999"
+
+## Type:	integer
+## Default:	10
+## Command:	svc -t /service/cvm-qmail-udp/log
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+CVM_QMAIL_UDP_LOGNUM="10"
+

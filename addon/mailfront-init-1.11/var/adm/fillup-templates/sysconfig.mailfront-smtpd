@@ -1,0 +1,270 @@
+## Type:	ip
+## Default:	""
+## Command:	svc -t /service/mailfront-smtpd
+#
+# IP address the SMTP daemon should bind to on this host.
+# Default is "", which means to listen on all addresses of this host.
+#
+SMTP_ADDRESS=""
+
+## Type:	string
+## Default:	"25"
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Port number or name (from /etc/services) for the smtp daemon.
+#
+SMTP_PORT="25"
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Set local hostname to keep tcpserver from looking it up in DNS.
+# Default is "", which means using the result of "hostname -f".
+# A common choice for localname is 0. To avoid loops, you must use this
+# option for servers on TCP port 53.
+#
+SMTP_LOCALNAME=""
+
+## Type:	integer
+## Default:	20
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Maximum number of simultaneous smtp daemon processes.
+#
+SMTP_CONCURRENCY="20"
+
+## Type:	integer
+## Default:	20000000
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Memory limit in bytes for daemon's data segment.
+# Important: You probably want to raise this limit significantly if you
+#            have an SSL enabled tcpserver!
+#
+SMTP_LIMIT="20000000"
+
+## Type:        integer
+## Default:     120
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Number of seconds mailfront smtpd will wait for each new buffer of data
+# from the remote SMTP client.
+#
+SMTP_TIMEOUT="120"
+
+## Type:        integer
+## Default:     3600
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Times out seconds after the connection was established
+#
+SMTP_SESSION_TIMEOUT="3600"
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/mailfront-smtpd
+#
+# SMTP greeting string.
+# Defaults to "<hostname> mailfront"
+#
+SMTP_GREETING=""
+
+## Type:        integer
+## Default:     "0"
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Maximum number of recipients, or "0" for no limit. If a message exceeds
+# this limit, smtpd returns a permanent error code to the client.
+#
+SMTP_MAXRCPTS="0"
+
+## Type:        integer
+## Default:     "0"
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Maximum number of bytes allowed in a message, or "0" for no limit. If a
+# message exceeds this limit, smtpd returns a permanent error code to
+# the client; in contrast, if the disk is full or smtpd hits a resource
+# limit, smtpd returns a temporary error code.
+#
+# Counts bytes as stored on disk, not as transmitted through the network.
+# It does not count the smtpd Received line, the qmail-queue Received
+# line, or the envelope.
+#
+SMTP_DATABYTES="0"
+
+## Type:        integer
+## Default:     0
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Clients are disconnected if they send more than the specified number
+# of commands that result in a "500 Not implemented." error.
+#
+SMTP_MAXNOTIMPL="0"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Path to mailrules file. See http://untroubled.org/mailfront/mailrules.html
+# for more information on mailrules.
+#
+SMTP_MAILRULES=""
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Path to mailfront patterns specification file. See
+# http://untroubled.org/mailfront/patterns.html for more information.
+#
+SMTP_PATTERNS=""
+
+## Type:        integer
+## Default:     256
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Not more than this number of bytes are added to the line buffer before
+# the pattern matching is done.
+#
+SMTP_PATTERNS_LINEMAX="256"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Message if any pattern matches. If empty defaults to
+# "This message contains prohibited content"
+#
+SMTP_PATTERNS_RESP=""
+
+## Type:	yesno
+## Default:	"no"
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Lookup recipient address through CVM module to deny a message
+# for unknown recipients before message data is read.
+#
+SMTP_LOOKUP="no"
+
+## Type:        list(command,local,udp)
+## Default:     "command"
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Contact mode to Credential Validation Modules.
+# Values of "command" and "local" require the CVM module to be installed
+# on the same host. Values of "local" and "udp" require a running CVM
+# authentication module at the location provided by the SMTP_CVM_LOCATION
+# variable.
+#
+SMTP_CVM_MODE="command"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/mailfront-smtpd
+#
+# The default means no lookup is done.
+# Otherwise the value depends on the value of $SMTP_CVM_MODE:
+# $SMTP_CVM_MODE=="command": Path to authentication CVM module. 
+# $SMTP_CVM_MODE=="local": Path to unix socket file.
+# $SMTP_CVM_MODE=="udp": "host:port"
+#
+SMTP_CVM_LOOKUP_LOCATION=""
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Set to an arbitrary value if you want CVM to encrypt passwords.
+#
+SMTP_CVM_LOOKUP_SECRET=""
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/mailfront-smtpd
+#
+# List of IP numbers or IP number ranges of hosts that can send their emails
+# through our smtp server. Don't set any IPs of this host since they are
+# included automatically.
+# Examples for IP ranges: "192.168. 213.191.36.100-120 10.0.0-63."
+#
+SMTP_RELAYFROMIP=""
+
+## Type:        list(local,tcp)
+## Default:     "local"
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Contact mode to policyd.
+# No policy daemon is contacted when this field is left empty.
+# "local" is for a policy daemon running on the same host and listening on
+# a UNIX socket. Choose "tcp" if policy daemon is running on a TCP port.
+#
+SMTP_POLICYD_MODE=""
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Contact information for policy daemon. For a UNIX domain socket it must be
+# the socket file name of the daemon. For TCP a combination of IPv4 number
+# and socket is required, separated by a colon, e.g. "127.0.0.1:10031".
+#
+SMTP_POLICYD_LOCATION=""
+
+## Type:	yesno
+## Default:	"no"
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Defines behaviour of the policy plugin if it can not contact the
+# policy daemon. If set to "yes" policy checking is skipped silently,
+# else an deferral (451) code is sent to the SMTP client.
+#
+SMTP_POLICYD_FAILSAFE="no"
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/mailfront-smtpd
+#
+# List of RBL domain servers on which to do lookups.
+#
+SMTP_RBLHOSTS=""
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/mailfront-smtpd
+#
+# List of Anti-RBL domain servers on which to do lookups.
+#
+SMTP_ANTIRBLHOSTS=""
+
+## Type:	integer
+## Default:	60
+## Command:	svc -t /service/mailfront-smtpd
+#
+# Timeout value for rblsmtpd.
+#
+SMTP_RBLTIMEOUT="60"
+
+## Type:        integer
+## Default:     99999
+## Command:	svc -t /service/mailfront-smtpd/log
+#
+# sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+SMTP_LOGSIZE="99999"
+
+## Type:	integer
+## Default:	10
+## Command:	svc -t /service/mailfront-smtpd/log
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+SMTP_LOGNUM="10"
+

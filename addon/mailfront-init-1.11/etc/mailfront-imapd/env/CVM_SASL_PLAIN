@@ -1,0 +1,4 @@
+cvm-command:/usr/bin/cvm-unix
+
+# Use UNIX domain socket for CVM authentication.
+# This requires cvm-vmailmgr-local to run on this host.

@@ -1,0 +1,3 @@
+/usr/bin/qmail-popup				root.qmail	0711
+/usr/share/qmail/create-config-qmail-pop3d	root.root	0750
+/usr/share/qmail/create-config-log-qmail-pop3d	root.root	0750

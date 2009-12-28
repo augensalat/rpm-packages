@@ -1,0 +1,4 @@
+120
+
+Times out connections after <above value> seconds of inactivity
+(defaults to 1200 seconds or 20 minutes).

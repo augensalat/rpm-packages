@@ -1,0 +1,11 @@
+#!/bin/sh
+
+exec 2>&1
+
+test -x /usr/share/cvm/create-config-cvm-vmailmgr-udp -a /etc/sysconfig/cvm -nt ./env/ADDRESS && \
+	/usr/share/cvm/create-config-cvm-vmailmgr-udp
+
+exec envdir ./env sh -c '
+    exec ${LIMIT:+softlimit -m $LIMIT} \
+	cvm-vmailmgr cvm-udp:${ADDRESS:-0}:{PORT:-323}
+'

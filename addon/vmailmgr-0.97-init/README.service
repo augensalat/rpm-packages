@@ -1,0 +1,36 @@
+vmailmgr Services
+-----------------
+
+There are two services associated with vmailmgr:
+
+	vmailmgrd - vmailmgr daemon on a local unix socket
+	vmailmgrd-tcp  - vmailmgr daemon on a tcp socket
+
+Package "vmailmgr" is required for the other packages that provide the
+services.
+
+When installing one of these RPMs, the corresponding service(s) are
+installed and started automatically. They will be cleanly removed when
+you de-install the package.
+
+To ensure that the service starts, run the following command:
+	svc-start NAME
+From this point on, the service will start every time you boot.
+
+To temporarily stop a service, run the following command:
+	svc-stop NAME
+This will mark the service as "down", and it will not be started at
+boot.
+
+To permanently remove the service without de-installing the whole RPM,
+run:
+	svc-remove NAME
+
+As long as its RPM is installed, you can add a service again with:
+	svc-add NAME
+
+
+Acknowledgements:
+
+Bruce Guenter <bruceig@em.ca> - Author of vmailmgr
+Bernhard Graf <graf@movingtarget.de> - SuSE RPM

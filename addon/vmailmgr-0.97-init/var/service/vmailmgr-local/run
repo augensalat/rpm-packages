@@ -1,0 +1,17 @@
+#!/bin/sh
+umask 0
+
+exec 2>&1 \
+    envdir /etc/vmailmgr/env sh -c '
+	concurrency=${VMAILMGRLOCAL_CONCURRENCY:+"-c $VMAILMGRLOCAL_CONCURRENCY"}
+	socketfile=`head -1 /etc/vmailmgr/socket-file 2>/dev/null`
+
+	softlimit="softlimit -c 0"
+	softlimit=${VMAILMGRLOCAL_LIMITDATA:+"$softlimit -d $VMAILMGRLOCAL_LIMITDATA"}
+	softlimit=${VMAILMGRLOCAL_LIMITCPU:+"$softlimit -t $VMAILMGRLOCAL_LIMITCPU"}
+
+	exec \
+	$softlimit \
+	unixserver $concurrency -v -- "${socketfile:-/tmp/.vmailmgrd}" \
+	vmailmgrd -D -V
+'

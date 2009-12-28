@@ -1,0 +1,27 @@
+#######################################################################
+##
+##  CGIT - GIT CGI frontend
+## -------------------------
+##
+## http://hjemli.net/git/cgit/
+## http://redmine.stbuehler.de/wiki/debianserver/Cgit
+##
+## You may make modifications here or c&p this to the appropriate
+## virtual host configuration file (directory vhosts.d) and modify
+## it there.
+##
+
+# $HTTP["host"] == "cgit.example.com" {
+#     alias.url = (
+#         "/static/" => "/srv/www/cgit/htdocs/",
+#         "/favicon.ico" => "/srv/www/cgit/htdocs/favicon.ico",
+#         "/cgit" => "/srv/www/cgit/cgi-bin/cgit",
+#     )
+#     url.rewrite-once = (
+#         "^/static/.*$" => "$0",
+#         "^/([^?/]+/[^?]*)?(?:\?(.*))?$" => "/cgit?url=$1&$2",
+#     )
+#     cgi.assign = (
+#         "/srv/www/cgit/cgi-bin/cgit" => "",
+#     )
+# }

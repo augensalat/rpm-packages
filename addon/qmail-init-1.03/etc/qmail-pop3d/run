@@ -1,0 +1,20 @@
+#!/bin/sh
+
+exec 2>&1
+
+if test -x /usr/share/qmail/create-config-qmail-pop3d ; then
+    test /etc/sysconfig/qmail -nt ./env/ADDRESS -o /etc/sysconfig/mail -nt ./env/ADDRESS && \
+	/usr/share/qmail/create-config-qmail-pop3d
+fi
+
+exec envdir ./env sh -c '
+    test -s ./rules/data.cdb && tcprules="-x ./rules/data.cdb" || tcprules=""
+
+    exec \
+	${LIMIT:+softlimit -m $LIMIT} \
+	tcpserver -dHRv -c ${CONCURRENCY:-20} -l $localname \
+		$tcprules ${ADDRESS:-0} ${PORT:-110} \
+	qmail-popup ${LOCALNAME:-$(head -1 /var/qmail/control/me)} \
+	${CHECKPASSWORD:-checkpassword} \
+	qmail-pop3d Maildir/
+'

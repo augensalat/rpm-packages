@@ -1,0 +1,10 @@
+## Path:        System/Security/CVM
+## Description: Basic configuration of cvm
+## Type:        yesno
+## Default:     "yes"
+#
+# Configuration file generation from the settings here is disabled, if
+# CVM_CREATE_CONFIG="no".
+#
+CVM_CREATE_CONFIG="yes"
+

@@ -1,0 +1,68 @@
+qmail Services
+--------------
+
+There are seven services associated with qmail:
+
+Package qmail:
+	qmail       - Main qmail server
+	qmail-qread - Local qmail queue-reading server
+	qmail-qstat - Local qmail queue-statistics server
+
+Package qmail-smtp:
+	qmail-smtpd - SMTP server
+
+Package qmail-qmtp:
+	qmail-qmtpd - QMTP server
+
+Package qmail-qmqp:
+	qmail-qmqpd - QMQP server
+
+Package qmail-pop3d:
+	qmail-pop3d - POP3 server
+
+Package "qmail" is required for the other packages. The "qmail-qread"
+and "qmail-qstat" services are used by the "mailq" command to provide
+information about the status of the mail queue.
+
+When installing one of these RPMs, the corresponding service(s) are
+installed. Only the services from package qmail are started automatically.
+Services from the other packages must be configured first.
+All services will be cleanly removed when you de-install the package.
+
+There are two ways to control services:
+
+1. Traditional init.d style (recommended):
+
+   The init.d scripts are wrappers for svc calls described under 2.,
+   therefore all init.d services are supervised by daemontools.
+
+   To start a service, run the following command:
+	rcNAME start
+
+   To stop a service, run the following command:
+	rcNAME stop
+
+   To ensure that the service starts at boot, run the following command:
+	chkconfig NAME on
+
+   To ensure that the service does not start at boot, run:
+	chkconfig NAME off
+
+2. daemontools style (and supervise-scripts):
+
+   To ensure that the service starts, run the following command:
+	svc-start NAME
+   From this point on, the service will start every time you boot.
+
+   To temporarily stop a service, run the following command:
+	svc-stop NAME
+   This will mark the service as "down", and it will not be started at
+   boot.
+
+   To permanently remove the service without de-installing the whole RPM,
+   run:
+	svc-remove NAME
+
+   As long as its RPM is installed, you can add a service again with:
+	svc-add /etc/NAME
+

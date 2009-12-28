@@ -1,0 +1,15 @@
+/usr/sbin/sendmail
+
+# If OUTBOX is defined, mail can be sent via the IMAP connection by copying
+# a message to the INBOX.Outbox folder.  For all practical matters,
+# INBOX.Outbox looks and behaves just like any other IMAP folder.  If this
+# folder doesn't exist it must be created by the IMAP mail client, just
+# like any other IMAP folder.  The kicker: any message copied or moved to
+# this folder is will be E-mailed by the Courier-IMAP server, by running
+# the SENDMAIL program.  Therefore, messages copied or moved to this
+# folder must be well-formed RFC-2822 messages, with the recipient list
+# specified in the To:, Cc:, and Bcc: headers.  Courier-IMAP relies on
+# SENDMAIL to read the recipient list from these headers (and delete the Bcc:
+# header) by running the command "$SENDMAIL -oi -t -f $SENDER", with the
+# message piped on standard input.  $SENDER will be the return address
+# of the message, which is set by the authentication module.

@@ -1,0 +1,32 @@
+#!/bin/bash
+# This script can be used to implement syntax highlighting in the cgit
+# tree-view by refering to this file with the source-filter or repo.source-
+# filter options in cgitrc.
+#
+
+case "$1" in
+	*.c|*.h|*.cc|*.cpp|*.cxx|*.hh|*.hpp|*.hxx)
+		highlight -f -I -X -S c
+		;;
+	*.sh)
+		highlight -f -I -X -S sh
+		;;
+	*.pl|*.pm|*.cgi|*.plc|*.PL)
+		highlight -f -I -X -S perl
+		;;
+	*.php|*.php3|*.php4|*.php5)
+		highlight -f -I -X -S php
+		;;
+	*.html)
+		highlight -f -I -X -S html
+		;;
+	*.css)
+		highlight -f -I -X -S css
+		;;
+        *.sql)
+		highlight -f -I -X -S sql
+		;;
+	*)
+		highlight -f -I -X -S txt
+		;;
+esac

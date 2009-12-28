@@ -1,0 +1,8 @@
+diff -u package.orig/commands package/commands
+--- package.orig/commands	Thu Jul 12 18:49:49 2001
++++ package/commands	Tue Aug  7 00:19:05 2001
+@@ -15,3 +15,4 @@
+ envuidgid
+ envdir
+ setlock
++readsvscantitle

@@ -1,0 +1,5 @@
+
+#
+# Interface IP address the CVM daemon should bind to on this host.
+# Default is "", which means to listen on all addresses of this host.
+#

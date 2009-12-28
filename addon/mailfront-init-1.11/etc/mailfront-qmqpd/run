@@ -1,0 +1,19 @@
+#!/bin/sh
+
+exec 2>&1
+
+if test -x /usr/share/mailfront/create-config-mailfront-qmqpd ; then
+    test /etc/sysconfig/mailfront -nt ./env/ADDRESS -o /etc/sysconfig/mail -nt ./env/ADDRESS && \
+	/usr/share/mailfront/create-config-mailfront-qmqpd
+fi
+
+exec envdir ./env sh -c '
+    test -s ./rules/data.cdb && tcprules="-x ./rules/data.cdb" || tcprules=""
+
+    exec \
+	${LIMIT:+softlimit -d $LIMIT} \
+	envuidgid qmaild \
+	tcpserver -dRUvX -c ${CONCURRENCY:-20} -l ${LOCALNAME:-$(head -1 /var/qmail/control/me)} \
+		$tcprules ${ADDRESS:-0} ${PORT:-628} \
+	mailfront qmqp qmail check-fqdn qmail-validate add-received accept-sender
+'

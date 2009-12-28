@@ -1,0 +1,107 @@
+#! /bin/sh
+# Author: Bernhard Graf <graf@movingtarget.de>
+#
+# /etc/init.d/walldns
+#   and its symbolic link
+# /usr/sbin/rcwalldns
+#
+# System startup script for djbdns walldns
+#
+### BEGIN INIT INFO
+# Provides:          walldns
+# Required-Start:    $network $remote_fs
+# Required-Stop:     $network $remote_fs
+# Default-Start:     3 5
+# Default-Stop:      0 1 2 4 6
+# Short-Description: Start walldns
+# Description:       Start walldns
+### END INIT INFO
+
+# Check for missing binaries (stale symlinks should not happen)
+test -L /service/walldns || exit 5
+
+# Shell functions sourced from /etc/rc.status:
+#      rc_check         check and set local and overall rc status
+#      rc_status        check and set local and overall rc status
+#      rc_status -v     be verbose in local rc status and clear it afterwards
+#      rc_status -v -r  ditto and clear both the local and overall rc status
+#      rc_status -s     display "skipped" and exit with status 3
+#      rc_status -u     display "unused" and exit with status 3
+#      rc_failed        set local and overall rc status to failed
+#      rc_failed <num>  set local and overall rc status to <num>
+#      rc_reset         clear both the local and overall rc status
+#      rc_exit          exit appropriate to overall rc status
+#      rc_active        checks whether a service is activated by symlinks
+#      rc_splash arg    sets the boot splash screen to arg (if active)
+. /etc/rc.status
+
+# Reset status of this service
+rc_reset
+
+# Return values acc. to LSB for all commands but status:
+# 0	  - success
+# 1       - generic or unspecified error
+# 2       - invalid or excess argument(s)
+# 3       - unimplemented feature (e.g. "reload")
+# 4       - user had insufficient privileges
+# 5       - program is not installed
+# 6       - program is not configured
+# 7       - program is not running
+# 8--199  - reserved (8--99 LSB, 100--149 distrib, 150--199 appl)
+# 
+# Note that starting an already running service, stopping
+# or restarting a not-running service as well as the restart
+# with force-reload (in case signaling is not supported) are
+# considered a success.
+
+case "$1" in
+    start)
+	echo -n "Starting walldns "
+	## Start daemon with supervise.
+	svc-start walldns
+
+	# Remember status and be verbose
+	rc_status -v
+	;;
+    stop)
+	echo -n "Shutting down walldns "
+	## Stop supervised daemon.
+	svc-stop walldns
+
+	# Remember status and be verbose
+	rc_status -v
+	;;
+    try-restart)
+	## Stop the service and if this succeeds (i.e. the
+	## service was running before), start it again.
+	$0 stop  &&  $0 start
+
+	# Remember status and be quiet
+	rc_status
+	;;
+    restart)
+	## Stop the service and regardless of whether it was
+	## running or not, start it again.
+	$0 stop
+	$0 start
+
+	# Remember status and be quiet
+	rc_status
+	;;
+    reload|force-reload)
+	## Signal the daemon to reload its config with svc -t .
+	echo -n "Reloading walldns"
+	svc -t /service/walldns
+
+	rc_status -v
+	;;
+    status)
+	echo -n "Checking for walldns: "
+	svc-status walldns
+	;;
+    *)
+	echo "Usage: $0 {start|stop|status|try-restart|restart|force-reload|reload}"
+	exit 1
+	;;
+esac
+rc_exit

@@ -1,0 +1,197 @@
+## Type:	ip
+## Default:	""
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# IP address the QMTP daemon should bind to on this host.
+# Default is "", which means to listen on all addresses of this host.
+#
+QMTP_ADDRESS=""
+
+## Type:	string
+## Default:	"209"
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Port number or name (from /etc/services) for the qmtp daemon.
+#
+QMTP_PORT="209"
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Set local hostname to keep tcpserver from looking it up in DNS.
+# Default is "", which means using the result of "hostname -f".
+# A common choice for localname is 0. To avoid loops, you must use this
+# option for servers on TCP port 53.
+#
+QMTP_LOCALNAME=""
+
+## Type:        integer
+## Default:     20
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Maximum number of simultaneous qmtp daemon processes.
+#
+QMTP_CONCURRENCY="20"
+
+## Type:        integer
+## Default:     20000000
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Memory limit in bytes for daemon.
+# Important: You probably want to raise this limit significantly if you
+#            have an SSL enabled tcpserver!
+#
+QMTP_LIMIT="20000000"
+
+## Type:        integer
+## Default:     120
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Number of seconds mailfron qmtpd will wait for each new buffer of data
+# from the remote QMTP client.
+#
+QMTP_TIMEOUT="120"
+
+## Type:        integer
+## Default:     3600
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Times out seconds after the connection was established
+#
+QMTP_SESSION_TIMEOUT="3600"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# List of IP numbers or IP number ranges of hosts that can send their emails
+# through our qmtp server. Don't set any IPs of this host since they are
+# included automatically.
+# Examples for IP ranges: "192.168. 213.191.36.100-120 10.0.0-63."
+#
+QMTP_RELAYFROMIP=""
+
+## Type:        integer
+## Default:     "0"
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Maximum number of recipients, or "0" for no limit. If amessage exceeds
+# this limit, qmtpd returns a permanent error code to the client.
+#
+QMTP_MAXRCPTS="0"
+
+## Type:        integer
+## Default:     "0"
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Maximum number of bytes allowed in a message, or "0" for no limit. If a
+# message exceeds this limit, qmtpd returns a permanent error code to
+# the client; in contrast, if the disk is full or qmtpd hits a resource
+# limit, qmtpd returns a temporary error code.
+
+# Counts bytes as stored on disk, not as transmitted through the network.
+# It does not count the qmtpd Received line, the qmail-queue Received
+# line, or the envelope.
+#
+QMTP_DATABYTES="0"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Path to mailrules file. See http://untroubled.org/mailfront/mailrules.html
+# for more information on mailrules.
+#
+QMTP_MAILRULES=""
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Path to mailfront patterns specification file. See
+# http://untroubled.org/mailfront/patterns.html for more information.
+#
+QMTP_PATTERNS=""
+
+## Type:        integer
+## Default:     256
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Not more than this number of bytes are added to the line buffer before
+# the pattern matching is done.
+#
+QMTP_PATTERNS_LINEMAX="256"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Message if any pattern matches. If empty defaults to
+# "This message contains prohibited content"
+#
+QMTP_PATTERNS_RESP=""
+
+## Type:	yesno
+## Default:	"no"
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Lookup recipient address through CVM module to deny a message
+# for unknown recipients before message data is read.
+#
+QMTP_LOOKUP="no"
+
+## Type:        list(command,local,udp)
+## Default:     "command"
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Contact mode to Credential Validation Modules.
+# Values of "command" and "local" require the CVM module to be installed
+# on the same host. Values of "local" and "udp" require a running CVM
+# authentication module at the location provided by the QMTP_CVM_LOCATION
+# variable.
+#
+QMTP_CVM_MODE="command"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# The default means no lookup is done.
+# Otherwise the value depends on the value of $QMTP_CVM_MODE:
+# $QMTP_CVM_MODE=="command": Path to authentication CVM module. 
+# $QMTP_CVM_MODE=="local": Path to unix socket file.
+# $QMTP_CVM_MODE=="udp": "host:port"
+#
+QMTP_CVM_LOOKUP_LOCATION=""
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/mailfront-qmtpd
+#
+# Set to an arbitrary value if you want CVM to encrypt passwords.
+#
+QMTP_CVM_LOOKUP_SECRET=""
+
+## Type:        integer(4096:16777215)
+## Default:     99999
+## Command:	svc -t /service/mailfront-qmtpd/log
+#
+# sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+QMTP_LOGSIZE="99999"
+
+## Type:	integer(2:)
+## Default:	10
+## Command:	svc -t /service/mailfront-qmtpd/log
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+QMTP_LOGNUM="10"
+

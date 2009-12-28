@@ -1,0 +1,66 @@
+--- greylite.8
++++ greylite.8
+@@ -47,7 +47,7 @@
+ already provide this database):
+ .Bd -literal -offset indent
+ mkdir -p /var/db/greylite
+-sqlite3 -init greydb.sql /var/db/greylite/greylite.db
++sqlite3 -init greydb.sql /var/lib/greylite/greylite.db
+ .Ed
+ .Pp
+ Thereafter greylite can immediately be run from a tcpserver instance, either
+@@ -122,7 +122,7 @@
+ .It DBFILE
+ if set, its value indicates the full path to the database file to use. If not
+ set, the default filename
+-.Pa /var/db/greylite/greylite.db
++.Pa /var/lib/greylite/greylite.db
+ is used.
+ .It LOGTHRESHOLD
+ if set to an integer between 0 (LOG_EMERG) and 7 (LOG_DEBUG), log messages
+@@ -138,7 +138,7 @@
+ .It GEOIPDB_FILE
+ when using suspicion with GeoIP rules, the value of this variable is the full
+ path and filename of the GeoIP database. If not set, greylite will look for
+-.Ar /usr/local/share/GeoIP/GeoIP.dat .
++.Ar /usr/share/GeoIP/GeoIP.dat .
+ .It GREETDELAY
+ when set, greylite opens the connection immediately but introduces a small
+ delay (by default 6 seconds) before actually responding data to the client. If
+--- greylite.c
++++ greylite.c
+@@ -45,10 +45,10 @@
+ #define GREETDELAY_DEFAULT_DELAY    6000
+ 
+ /* default DB name if DBFILE environment variable is not specified */
+-#define DBNAME                      "/var/db/greylite/greylite.db"
++#define DBNAME                      "/var/lib/greylite/greylite.db"
+ #ifdef WITH_GEOIP
+ /* default GeoIP DB name */
+-#define GEOIPDBNAME                 "/usr/local/share/GeoIP/GeoIP.dat"
++#define GEOIPDBNAME                 "/usr/share/GeoIP/GeoIP.dat"
+ #endif
+ /* cleanup stale entries once every THIS many times */
+ #define DB_CLEANUP_PERIOD           800
+--- Makefile
++++ Makefile
+@@ -11,8 +11,8 @@
+ UCSPI2SOCKM= ucspi2socket
+ endif
+ 
+-CFLAGS=-I/usr/local/include -I/opt/local/include -O2 -Wall ${GEOC} 
+-LDFLAGS=-L/usr/local/lib -L/opt/local/lib -lsqlite3 -lpthread ${GEOLD}
++CFLAGS=-O2 -Wall ${GEOC} 
++LDFLAGS=-lsqlite3 -lpthread ${GEOLD}
+ 
+ ifdef WITH_CARES14
+ CFLAGS+= -DCARES14
+@@ -41,7 +41,7 @@
+ 
+ install: greylite ${DNSBLM} ${UCSPI2SOCKM} install-man
+ 	install -d $(PREFIX)/bin
+-	install -s greylite ${DNSBLM} ${UCSPI2SOCKM} $(PREFIX)/bin/
++	install greylite ${DNSBLM} ${UCSPI2SOCKM} $(PREFIX)/bin/
+ 
+ install-man:
+ 	install -d $(PREFIX)/man/man8/

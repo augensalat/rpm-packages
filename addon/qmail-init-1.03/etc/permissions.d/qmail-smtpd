@@ -1,0 +1,2 @@
+/usr/share/qmail/create-config-qmail-smtpd	root.root	0750
+/usr/share/qmail/create-config-log-qmail-smtpd	root.root	0750

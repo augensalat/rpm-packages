@@ -1,0 +1,45 @@
+#!/bin/sh
+
+exec 2>&1
+
+if test -x /usr/share/mailfront/create-config-mailfront-smtpd ; then
+    test /etc/sysconfig/mailfront -nt ./env/ADDRESS -o /etc/sysconfig/mail -nt ./env/ADDRESS && \
+	/usr/share/mailfront/create-config-mailfront-smtpd
+fi
+
+exec envdir ./env sh -c '
+    plugins="check-fqdn"
+    test -n "$DATABYTES" -o -n "$MAXRCPTS" && plugins="$plugins counters"
+    test -n "$MAILRULES" -a -f "$MAILRULES" && plugins="$plugins mailrules"
+    plugins="$plugins relayclient qmail-validate"
+    test -n "$CVM_LOOKUP" && plugins="$plugins cvm-validate"
+    plugins="$plugins policyd add-received"
+    test -n "$PATTERNS" && plugins="$plugins patterns"
+    plugins="$plugins accept-sender"
+
+    sentinel=""
+    # If rblsmtpd is installed, process RBL environment vars
+    rblsmtpd=$(which rblsmtpd 2>/dev/null)
+    rhostck=$(which rhost-check 2>/dev/null)
+    if test -n "$rblsmtpd" ; then
+	rblopts=""
+	for rblhost in $ANTIRBLHOSTS; do
+	    rblopts="$rblopts -a $rblhost"
+	done
+	for rblhost in $RBLHOSTS; do
+	    rblopts="$rblopts -r $rblhost"
+	done
+	rbltimeout=${RBLTIMEOUT:+"-t $RBLTIMEOUT"}
+	sentinel="$rhostck $rblsmtpd -b $rbltimeout$rblopts"
+    fi
+
+    test -s ./rules/data.cdb && tcprules="-x ./rules/data.cdb" || tcprules=""
+
+    exec \
+	${LIMIT:+softlimit -d $LIMIT} \
+	envuidgid qmaild \
+	tcpserver -DRUvX -c ${CONCURRENCY:-20} -l ${LOCALNAME:-$(head -1 /var/qmail/control/me)} \
+	    	$tcprules ${ADDRESS:-0} ${PORT:-25} \
+	$sentinel \
+	/usr/bin/mailfront smtp qmail ${plugins}
+'

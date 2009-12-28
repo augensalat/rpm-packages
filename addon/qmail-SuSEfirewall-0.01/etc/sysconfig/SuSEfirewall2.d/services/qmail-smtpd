@@ -1,0 +1,5 @@
+## Name: qmail-smtpd
+## Description: Open the smtp port for qmail.
+
+# space separated list of allowed TCP ports
+TCP="smtp"

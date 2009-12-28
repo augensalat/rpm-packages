@@ -1,0 +1,9 @@
+#!/bin/sh
+
+test -x /usr/share/twoftpd/create-log-config -a /etc/sysconfig/twoftpd -nt ../env/LOGSIZE && \
+    /usr/share/twoftpd/create-log-config
+
+exec envdir ../env sh -c '
+    exec setuidgid twoftpd \
+	multilog t ${LOGSIZE+s$LOGSIZE} ${LOGNUM+n$LOGNUM} /var/log/twoftpd
+'

@@ -1,0 +1,33 @@
+#!/bin/sh
+
+exec 2>&1
+
+if test -x /usr/share/mailfront/create-config-mailfront-qmtpd ; then
+    test /etc/sysconfig/mailfront -nt ./env/ADDRESS -o /etc/sysconfig/mail -nt ./env/ADDRESS && \
+	/usr/share/mailfront/create-config-mailfront-qmtpd
+fi
+
+exec envdir ./env sh -c '
+    plugins="check-fqdn"
+    test -n "$DATABYTES" -o -n "$MAXRCPTS" && plugins="$plugins counters"
+    test -n "$MAILRULES" -a -f "$MAILRULES" && plugins="$plugins mailrules"
+    plugins="$plugins relayclient qmail-validate"
+    if test -n "$CVM_LOOKUP" ; then
+	if test -z "$CVM_LOOKUP_SECRET" ; then
+	    CVM_LOOKUP_SECRET=""; export CVM_LOOKUP_SECRET
+	fi
+	plugins="$plugins cvm-validate"
+    fi
+    plugins="$plugins add-received"
+    test -n "$PATTERNS" && plugins="$plugins patterns"
+    plugins="$plugins accept-sender"
+
+    test -s ./rules/data.cdb && tcprules="-x ./rules/data.cdb" || tcprules=""
+
+    exec \
+	${LIMIT:+softlimit -d $LIMIT} \
+	envuidgid qmaild \
+	tcpserver -DRUvX -c ${CONCURRENCY:-20} -l ${LOCALNAME:-$(head -1 /var/qmail/control/me)} \
+		$tcprules ${ADDRESS:-0} ${PORT:-209} \
+	mailfront qmtp qmail ${plugins}
+'

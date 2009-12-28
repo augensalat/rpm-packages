@@ -1,0 +1,5 @@
+## Name: qmail-pop3d
+## Description: Open the pop3 port for qmail.
+
+# space separated list of allowed TCP ports
+TCP="pop3"

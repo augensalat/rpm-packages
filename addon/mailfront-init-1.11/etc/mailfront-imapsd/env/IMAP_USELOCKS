@@ -1,0 +1,6 @@
+0
+
+# Set IMAP_USELOCKS to 1 if you experience weird problems when using IMAP
+# clients that open multiple connections to the server.  I would hope that
+# most IMAP clients are sane enough not to issue commands to multiple IMAP
+# channels which conflict with each other.

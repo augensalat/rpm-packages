@@ -1,0 +1,10 @@
+#!/bin/sh
+
+exec 2>&1
+
+make-owners /etc/qmail
+
+test -x /usr/share/qmail/create-config-qmail -a /etc/sysconfig/qmail -nt /etc/qmail/control/me && \
+    /usr/share/qmail/create-config-qmail
+
+exec envdir ./env sh -c 'exec qmail-start ./Maildir/'

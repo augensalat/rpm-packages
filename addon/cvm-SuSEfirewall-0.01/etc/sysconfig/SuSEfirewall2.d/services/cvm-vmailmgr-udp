@@ -1,0 +1,5 @@
+## Name: cvm-vmailmgr-udp
+## Description: Open the smtp port for cvm-vmailmgr-udp.
+
+# space separated list of allowed UDP ports
+UDP="323 324"

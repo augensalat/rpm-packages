@@ -1,0 +1,38 @@
+#!/bin/sh
+
+exec 2>&1
+
+if test -x /usr/share/qmail/create-config-qmail-smtpd ; then
+    test /etc/sysconfig/qmail -nt ./env/ADDRESS -o /etc/sysconfig/mail -nt ./env/ADDRESS && \
+	/usr/share/qmail/create-config-qmail-smtpd
+fi
+
+exec envdir ./env sh -c '
+    # If rblsmtpd is installed, process rbltimeout rbldomains, and antirbldomains
+    rbl=''
+    rblsmtpd=$(which rblsmtpd 2>/dev/null)
+    if test -n "$rblsmtpd" ; then
+	rblopts=''
+	for rblhost in $ANTIRBLHOSTS; do
+	    rblopts="$rblopts -a $rblhost"
+	done
+	for rblhost in $RBLHOSTS; do
+	    rblopts="$rblopts -r $rblhost"
+	done
+	if test -n "$rblopts" ; then
+	    rbltimeout=${RBLTIMEOUT:+"-t $RBLTIMEOUT"}
+	    rbl="rblsmtpd -b $rbltimeout $rblopts"
+	fi
+    fi
+
+    test -s ./rules/data.cdb && tcprules="-x ./rules/data.cdb" || tcprules=""
+
+    exec \
+	${LIMIT:+softlimit -m $LIMIT} \
+	envuidgid qmaild \
+	tcpserver -DRUvX -c ${CONCURRENCY:-20} -l ${LOCALNAME:-$(head -1 /etc/qmail/control/me)} \
+		$tcprules ${ADDRESS:-0} ${PORT:-25} \
+	fixcrio \
+	$rbl \
+	qmail-smtpd
+'

@@ -1,0 +1,26 @@
+--- alpha/__pause.c
++++ alpha/__pause.c
+@@ -1,7 +1,7 @@
+ #include <unistd.h>
+ #include <signal.h>
+ 
+-int pause(void)
++int __libc_pause(void)
+ {
+   sigset_t set;
+   sigemptyset(&set);
+@@ -9,3 +9,4 @@
+   return sigsuspend(&set);
+ }
+ 
++int pause(void) __attribute__ ((weak, alias("__libc_pause")));
+--- ia64/Makefile.add
++++ ia64/Makefile.add
+@@ -1,2 +1,2 @@
+ VPATH:=ia64:syscalls.s:$(VPATH)
+-LIBOBJ+=$(OBJDIR)/__time.o $(OBJDIR)/__waitpid.o $(OBJDIR)/__nice.o $(OBJDIR)/__alarm.o
++LIBOBJ+=$(OBJDIR)/__time.o $(OBJDIR)/__waitpid.o $(OBJDIR)/__nice.o $(OBJDIR)/__alarm.o $(OBJDIR)/__pause.o
+--- ia64/__pause.c
++++ ia64/__pause.c
+@@ -0,0 +1 @@
++#include "alpha/__pause.c"

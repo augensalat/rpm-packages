@@ -1,0 +1,134 @@
+## Type:	ip
+## Default:	""
+## Command:	svc -t /service/qmail-smtpd
+#
+# IP address the SMTP daemon should bind to on this host.
+# Default is "", which means to listen on all addresses of this host.
+#
+SMTP_ADDRESS=""
+
+## Type:	string
+## Default:	"25"
+## Command:	svc -t /service/qmail-smtpd
+#
+# Port number or name (from /etc/services) for the smtp daemon.
+#
+SMTP_PORT="25"
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/qmail-smtpd
+#
+# Set local hostname to keep tcpserver from looking it up in DNS.
+# Default is "", which means using the result of "hostname -f".
+# A common choice for localname is 0. To avoid loops, you must use this
+# option for servers on TCP port 53.
+#
+SMTP_LOCALNAME=""
+
+## Type:        integer
+## Default:     20
+## Command:	svc -t /service/qmail-smtpd
+#
+# Maximum number of simultaneous smtp daemon processes.
+#
+SMTP_CONCURRENCY="20"
+
+## Type:        integer
+## Default:     1200
+## Command:	svc -t /service/qmail-smtpd
+#
+# Number of seconds qmail-smtpd will wait for each new buffer of data
+# from the remote SMTP client.
+#
+SMTP_TIMEOUT="1200"
+
+## Type:        integer
+## Default:     "0"
+## Command:	svc -t /service/qmail-smtpd
+#
+# Maximum number of bytes allowed in a message, or "0" for no limit. If a
+# message exceeds this limit, smtpd returns a permanent error code to
+# the client; in contrast, if the disk is full or smtpd hits a resource
+# limit, smtpd returns a temporary error code.
+
+# Counts bytes as stored on disk, not as transmitted through the network.
+# It does not count the smtpd Received line, the qmail-queue Received
+# line, or the envelope.
+#
+SMTP_DATABYTES="0"
+
+## Type:        integer
+## Default:     10000000
+## Command:	svc -t /service/qmail-smtpd
+#
+# Memory limit in bytes for daemon.
+# Important: You probably want to raise this limit significantly if you
+#            have an SSL enabled tcpserver!
+#
+SMTP_LIMIT="10000000"
+
+## Type:        string
+## Default:     ""
+## Command:	svc -t /service/qmail-smtpd
+#
+# List of IP numbers or IP number ranges of hosts that can send their emails
+# through this SMTP daemon.
+# Examples for IP ranges: "192.168. 213.191.36.100-120 10.0.0-63."
+#
+SMTP_RELAYFROMIP=""
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/qmail-smtpd
+#
+# List of RBL domain servers on which to do lookups.
+#
+SMTP_RBLHOSTS=""
+
+## Type:	integer
+## Default:	60
+## Command:	svc -t /service/qmail-smtpd
+#
+# Timeout value for rblsmtpd.
+#
+SMTP_RBLTIMEOUT="60"
+
+## Type:	string
+## Default:	""
+## Command:	svc -t /service/qmail-smtpd
+#
+# List of domains for which to disable RBL testing.
+#
+SMTP_ANTIRBLHOSTS=""
+
+## Type:	yesno
+## Default:	"no"
+## Command:	svc -t /service/qmail-smtpd
+#
+# Set to "yes" to enable recipient validation in smtpd.
+#
+SMTP_CHKRCPT="no"
+
+## Type:        integer
+## Default:     99999
+## Command:	svc -t /service/qmail-smtpd/log
+#
+# sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+SMTP_LOGSIZE="99999"
+
+## Type:	integer
+## Default:	10
+## Command:	svc -t /service/qmail-smtpd/log
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+SMTP_LOGNUM="10"
+
