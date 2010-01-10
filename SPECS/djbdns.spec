@@ -1,28 +1,19 @@
 #
 # spec file for package djbdns (Version 1.05)
 #
-# Copyright  (c)  2001-2008  Bernhard Graf <graf@movingtarget.de>
+# Copyright  (c)  2001-2010  Bernhard Graf <graf@movingtarget.de>
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
 
 %define name			djbdns
 %define version                 1.05
-%define release                 12
-%global build_mandrake          %([ -e /etc/mandrake-release ]; echo $[1-$?])
-%global build_suse              %([ -e /etc/SuSE-release ]; echo $[1-$?])
+%define release                 13
 
 Name:		%{name}
 Version:        %{version}
-%if %build_mandrake
-Release:        %{release}mdk
-Distribution:   %(head -n1 /etc/mandrake-release)
-%elseif %build_suse
 Release:        %{release}
 Distribution:   %(head -n1 /etc/SuSE-release)
-%else
-Release:        %{release}
-%endif
 Summary:	Domain Name System server and tools
 License:	Copyright 2000 D. J. Bernstein <djb@cr.yp.to>
 URL:		http://cr.yp.to/djbdns.html
@@ -35,6 +26,7 @@ Patch0:		djbdns-%{version}-fhs.patch
 Patch1:		djbdns-%{version}-man-fhs.patch
 Patch2:		djbdns-%{version}-rootservers.patch
 Patch3:		http://www.iecc.com/rbldns-patch.txt
+Patch4:		djbdns-%{version}-thirdpartypoisoning.patch
 PreReq:		%insserv_prereq
 BuildRequires:	c_compiler make patch binutils coreutils
 BuildRoot:	%{_tmppath}/djbdns-%{version}-%(id -nu)
@@ -145,6 +137,7 @@ URL:		http://cr.yp.to/djbdns/tools.html
 %patch1
 %patch2
 %patch3 -p1
+%patch4
 echo %{_exec_prefix} >conf-home
 
 %build
@@ -502,6 +495,10 @@ test "%{buildroot}" != "/" && test -d "%{buildroot}" && %{__rm} -rf "%{buildroot
 
 
 %changelog
+* Sun Jan 10 2010 Bernhard Graf <graf@movingtarget.de>
+- applying security patch, see
+  http://www.securityfocus.com/archive/1/501294/30/0/threaded
+  http://article.gmane.org/gmane.network.djbdns/13864
 * Tue Jan 29 2008 Bernhard Graf <graf@movingtarget.de>
 - changed RPM groups to match SuSE (LSB?) standards
 - using RPM macros fillup_and_insserv, insserv_cleanup and restart_on_update
