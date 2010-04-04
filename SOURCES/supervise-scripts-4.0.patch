@@ -1,5 +1,5 @@
---- svscan-add-to-inittab.in	2002-04-23 00:19:38.000000000 +0200
-+++ svscan-add-to-inittab.in	2003-05-10 01:38:35.000000000 +0200
+--- svscan-add-to-inittab.sh
++++ svscan-add-to-inittab.sh
 @@ -4,10 +4,8 @@
  
  # Look for the svscan lines, and exit if they both exist
@@ -25,10 +25,10 @@
 @@ -54,8 +52,7 @@
  # Splice the new lines into the old file
  {
-   catit | head -$(($lineno-1))
+   catit | head -n $(($lineno-1))
 -  echo "SV:2345:respawn:$conf_bin/svscan-start /service"
 -  echo "SX:S016:wait:$conf_bin/svscan-stopall /service"
 +  echo "SV:2345:respawn:$conf_bin/svscanboot"
-   catit | tail +$lineno
+   catit | tail -n +$lineno
  } >"$tmpfile"
  

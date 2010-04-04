@@ -1,38 +1,28 @@
 #
 # spec file for package supervise-scripts (Version 3.5)
 #
-# Copyright  (c)  2003-2008  Bernhard Graf <graf@movingtarget.de>
+# Copyright  (c)  2003-2010  Bernhard Graf <graf@movingtarget.de>
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
 
 %define package_name    supervise-scripts
-%define version         3.5
-%define release         5
-%global build_mandrake  %([ -e /etc/mandrake-release ]; echo $[1-$?])
-%global build_suse      %([ -e /etc/SuSE-release ]; echo $[1-$?])
+%define version         4.0
+%define release         0
 
 Name:           %{package_name}
 Version:        %{version}
-%if %build_mandrake
-Release:        %{release}mdk
-Distribution:   %(head -n1 /etc/mandrake-release)
-%elseif %build_suse
 Release:        %{release}
 Distribution:   %(head -n1 /etc/SuSE-release)
-%else
-Release:        %{release}
-%endif
 Summary:	Utility scripts for use with supervise and svscan.
 License:	GPL
 Group:		System/Base
 Source:		http://untroubled.org/supervise-scripts/%{name}-%{version}.tar.gz
 Patch:		%{name}-%{version}.patch
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%(id -u -n)
+BuildRoot:	%{_tmppath}/%{name}-%{version}-%(id -nu)
 URL:		http://untroubled.org/supervise-scripts/
-Packager:	Bernhard Graf <graf@movingtarget.de>
-Requires:	daemontools >= 0.75 binutils coreutils grep
-BuildRequires:	bglibs >= 1.011
+Requires:	daemontools >= 0.76 coreutils grep
+BuildArch:	noarch
 
 %description
 A set of scripts for handling programs managed with supervise and svscan.
@@ -44,8 +34,6 @@ A set of scripts for handling programs managed with supervise and svscan.
 %build
 echo /sbin >conf-bin
 echo %{_mandir} >conf-man
-echo %{_libdir}/bglibs >conf-bglibs
-echo %{_includedir}/bglibs >conf-bgincs
 %{__make} programs
 
 %install
@@ -54,11 +42,7 @@ test "%{buildroot}" != "/" && test -d %{buildroot} && %{__rm} -rf %{buildroot}
 %{__install} -d %{buildroot}%{_mandir}
 %{__install} -d -m 0755 %{buildroot}/var/service
 
-echo %{buildroot}/sbin >conf-bin
-echo %{buildroot}%{_mandir} >conf-man
-%{__make} installer instcheck
-./installer
-./instcheck
+%{__make} PREFIX=%{buildroot} install
 
 %post
 /sbin/svscan-add-to-inittab
@@ -74,6 +58,8 @@ test "%{buildroot}" != "/" && test -d %{buildroot} && %{__rm} -rf %{buildroot}
 %attr(0775,-,-) %dir /var/service
 
 %changelog
+* Sun Apr 04 2010 Bernhard Graf <graf@movingtartget.de>
+- upgraded to version 4.0
 * Tue Jan 29 2008 Bernhard Graf <graf@movingtartget.de>
 - adjusted RPM group according to SuSE specs
 * Thu Jan 27 2005 Bernhard Graf <graf@movingtartget.de>
