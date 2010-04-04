@@ -1,0 +1,13 @@
+openSUSE RPM Packages
+=====================
+
+This is a collection of RPM SPEC files of server software packages
+I use on a couple of systems.
+
+The actual software packages are not included, you can find their URLs
+inside the SPEC files. For a couple of packages I added a runtime
+environment, that is found in the `addon` directory.
+
+Whenever possible daemons run as supervised processes under [daemonstools][].
+
+[daemonstools]: http://cr.yp.to/daemontools.html
