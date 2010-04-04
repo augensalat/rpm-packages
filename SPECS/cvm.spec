@@ -1,14 +1,14 @@
 #
-# spec file for package cvm (Version 0.90)
+# spec file for package cvm (Version 0.96)
 #
-# Copyright  (c)  2002-2008  Bernhard Graf <graf@movingtarget.de>
+# Copyright  (c)  2002-2010  Bernhard Graf <graf@movingtarget.de>
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
 
 %define name		cvm
 %define initname	%{name}-init
-%define version		0.90
+%define version		0.96
 %define initversion	%{version}
 %define release		0
 
@@ -30,7 +30,8 @@ Patch:		%{name}-%{version}-legacy-include.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%(id -nu)
 PreReq:		%fillup_prereq /bin/cat /bin/mkdir /bin/touch /bin/chown /bin/chmod
 BuildRequires:	coreutils filesystem fileutils fillup make c_compiler libtool
-BuildRequires:	bglibs >= 1.100 mysql-devel postgresql-devel
+BuildRequires:	bglibs >= 1.103 mysql-devel postgresql-devel
+Requires:	bglibs >= 1.103
 Obsoletes:	cvm-vmailmgr cvm-qmail
 URL:		http://untroubled.org/cvm/
 
@@ -429,6 +430,10 @@ sleep 3
 
 
 %changelog
+* Sun Apr 04 2010 Bernhard Graf <graf@movingtarget.de>
+- updated to version 0.96
+* Tue Nov 03 2009 Bernhard Graf <graf@movingtarget.de>
+- updated to version 0.95
 * Mon Nov 03 2008 Bernhard Graf <graf@movingtarget.de>
 - updated to version 0.90
 * Wed Mar 05 2008 Bernhard Graf <graf@movingtarget.de>
