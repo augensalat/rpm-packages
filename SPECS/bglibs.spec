@@ -1,14 +1,14 @@
 #
-# spec file for package bglibs (Version 1.104)
+# spec file for package bglibs (Version 1.106)
 #
-# Copyright  (c)  2004-2008  Bernhard Graf <graf@movingtarget.de>
+# Copyright  (c)  2004-2009  Bernhard Graf <graf@movingtarget.de>
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
 
 %define name		bglibs
-%define version		1.104
-%define release		1
+%define version		1.106
+%define release		0
 
 Name:		%{name}
 Version:        %{version}
@@ -65,6 +65,8 @@ echo "%{_libdir}/%{name}" >%{buildroot}%{_sysconfdir}/ld.so.conf.d/%{name}.conf
 %{_sysconfdir}/ld.so.conf.d/%{name}.conf
 
 %changelog
+* Thu Apr 02 2009 Bernhard Graf <graf@movingtarget.de>
+- updated to v1.106
 * Mon Nov 03 2008 Bernhard Graf <graf@movingtarget.de>
 - updated to v1.104
 * Fri Jan 18 2008 Bernhard Graf <graf@movingtarget.de>
