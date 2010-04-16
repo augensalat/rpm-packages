@@ -1,11 +1,9 @@
 #
-# spec file for package dietlibc (Version 0.31)
+# spec file for package dietlibc (Version 0.32)
 #
-# Copyright (c) 2007 SUSE LINUX Products GmbH, Nuernberg, Germany.
+# Copyright  (c)  2001-2009  Bernhard Graf <graf@movingtarget.de>
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
-#
-# Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
 # norootforbuild
@@ -15,7 +13,7 @@ License:        GPL v2 or later
 Group:          Development/Languages/C and C++
 Provides:       diet
 AutoReqProv:    on
-Version:        0.31
+Version:        0.32
 Release:        0
 Source0:        http://www.fefe.de/dietlibc/%{name}-%{version}.tar.bz2
 Patch1:         %{name}-%{version}-tcsetattr.diff
@@ -83,6 +81,8 @@ test "%{buildroot}" != "/" -a -d %{buildroot} && %{__rm} -rf %{buildroot}
 %{prefix}
 %{_bindir}/*
 %changelog
+* Thu Oct 15 2009 Bernhard Graf <graf@movingtarget.de>
+- update to 0.32
 * Thu Feb 21 2007 - Bernhard Graf <graf@movingtarget.de>
 - update to 0.31
 * Thu Feb 01 2007 - dmueller@suse.de
