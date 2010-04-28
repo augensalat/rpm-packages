@@ -1,28 +1,19 @@
 #
 # spec file for package ucspi-ipc (Version 0.67)
 #
-# Copyright  (c)  2008  Bernhard Graf <graf@movingtarget.de>
+# Copyright  (c)  2008 - 2010  Bernhard Graf <graf@movingtarget.de>
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
 
 %define package_name    ucspi-ipc
 %define version         0.67
-%define release         0
-%global build_mandrake  %([ -e /etc/mandrake-release ]; echo $[1-$?])
-%global build_suse      %([ -e /etc/SuSE-release ]; echo $[1-$?])
+%define release         1
 
 Name:           %{package_name}
 Version:        %{version}
-%if %build_mandrake
-Release:        %{release}mdk
-Distribution:   %(head -n1 /etc/mandrake-release)
-%elseif %build_suse
 Release:        %{release}
 Distribution:   %(head -n1 /etc/SuSE-release)
-%else
-Release:        %{release}
-%endif
 Summary:	An UCSPI protocol for the local communication domain
 License:	unknown, contact author
 Group:		Productivity/Networking/System
@@ -56,7 +47,7 @@ Author:
 %prep
 %setup -q -n host/superscript.com/net/%{name}-%{version}
 %patch
-echo gcc $RPM_OPT_FLAGS >src/conf-cc
+echo gcc -D_GNU_SOURCE $RPM_OPT_FLAGS >src/conf-cc
 echo gcc "$RPM_OPT_FLAGS -s" >src/conf-ld
 
 %build
@@ -80,5 +71,7 @@ test "%{buildroot}" != "/" -a -d %{buildroot} && %{__rm} -rf %{buildroot}
 %doc src/CHANGES src/TODO
 
 %changelog
-* Wed Jan 30 2008 Bernhard Graf <graf@movingtartget.de>
+* Wed Apr 28 2010 Bernhard Graf <graf@movingtartget.de> 0.67-1
+- make it build with glibc 2.10+
+* Wed Jan 30 2008 Bernhard Graf <graf@movingtartget.de> 0.67-0
 - initial wrap
