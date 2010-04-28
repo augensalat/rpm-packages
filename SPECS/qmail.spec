@@ -1,7 +1,7 @@
 #
 # spec file for package qmail (Version 1.03)
 #
-# Copyright  (c)  2001-2008  Bernhard Graf <graf@movingtarget.de>
+# Copyright  (c)  2001 - 2010  Bernhard Graf <graf@movingtarget.de>
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
@@ -9,7 +9,7 @@
 # %define _unpackaged_files_terminate_build 0
 %define pkgname		qmail
 %define pkgversion	1.03
-%define pkgrelease	55
+%define pkgrelease	56
 
 %if 0%{?suse_version} > 1020
 %define with_susefirewall_config 1
@@ -32,6 +32,7 @@ Distribution:   %(head -n1 /etc/SuSE-release)
 Summary:	qmail Mail Transfer Agent
 License:	Public Domain
 URL:		http://cr.yp.to/qmail.html
+Packager:	Bernhard Graf <graf@movingtarget.de>
 Group:		Productivity/Networking/Email/Servers
 Source0:	http://cr.yp.to/qmail/%{pkgname}-%{pkgversion}.tar.gz
 Source1:	qmail-init-%{pkgversion}.tar.bz2
@@ -40,6 +41,7 @@ Patch0:		%{pkgname}-%{pkgversion}-master.patch
 Patch1:		%{pkgname}-%{pkgversion}-link-sync.patch
 Patch2:		%{pkgname}-%{pkgversion}-dietlibc-readwrite.patch
 Provides:	MTA
+Provides:	smtp_daemon
 Obsoletes:	sendmail postfix exim
 Provides:	sendmail
 Conflicts:	qmail-cyclog
@@ -49,7 +51,7 @@ BuildRequires:	c_compiler make patch binutils coreutils
 %if %{build_dietlibc}
 BuildRequires:  dietlibc >= 0.30
 %endif
-Requires:	aaa_base aaa_skel djbdns-tools net-tools sh-utils shadow
+Requires:	aaa_base aaa_skel djbdns-tools net-tools sh-utils pwdutils
 Requires:	daemontools supervise-scripts >= 3.2 ucspi-ipc ucspi-tcp >= 0.86-1
 Requires:	util-linux
 
@@ -64,9 +66,12 @@ Qmail is targeted at real mail servers with MX record and a permanent
 TCP internet connection.
 
 This qmail variant is optimized for high-volume servers.
-%if %reiserfs
+%if %{reiserfs}
 The qmail queue is optimized for the Reiser filesystem or any
 filesystem that does hashing for fast file retrieval.
+%endif
+%if %{build_dietlibc}
+Built with dietlibc.
 %endif
 
 %debug_package
@@ -84,6 +89,9 @@ Provides:	smtp_daemon
 %description smtpd
 Support files for running the qmail SMTP server.
 RBL blocking is supported by the rblsmtpd in the new ucspi-tcp package.
+%if %{build_dietlibc}
+Built with dietlibc.
+%endif
 
 %package qmtpd
 Group:		Productivity/Networking/Email/Servers
@@ -101,6 +109,9 @@ Provides:	qmtp_daemon
 Provides:	qmail-qmtpd
 %description qmtpd
 Support files for running the qmail QMTP server.
+%if %{build_dietlibc}
+Built with dietlibc.
+%endif
 
 %package qmqpd
 Group:		Productivity/Networking/Email/Servers
@@ -118,6 +129,9 @@ Provides:	qmqp_daemon
 Provides:	qmail-qmqpd
 %description qmqpd
 Support files for running the qmail QMQP server.
+%if %{build_dietlibc}
+Built with dietlibc.
+%endif
 
 %package pop3d
 Group:		Productivity/Networking/Email/Servers
@@ -137,6 +151,9 @@ Provides:	pop3_daemon
 Provides:	qmail-pop3d
 %description pop3d
 Support files for running the qmail POP3 server.
+%if %{build_dietlibc}
+Built with dietlibc.
+%endif
 
 
 %prep
@@ -835,7 +852,10 @@ fi
 
 
 %changelog
-* Mon Apr 28 2008 Bernhard Graf <graf@movingtarget.de>
+* Wed Apr 28 2010 Bernhard Graf <graf@movingtarget.de> 1.03-56
+- fixed Requires for current openSUSE
+- added Provides: smtp_daemon to qmail base package
+* Mon Apr 28 2008 Bernhard Graf <graf@movingtarget.de> 1.03-55
 - moved back executables from /sbin to /usr/bin
 * Fri Feb 29 2008 Bernhard Graf <graf@movingtarget.de>
 - refactored configuration file layout
