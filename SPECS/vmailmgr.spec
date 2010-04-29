@@ -1,7 +1,7 @@
 #
 # spec file for package vmailmgr (Version 0.97)
 #
-# Copyright  (c)  2005 - 2008  Bernhard Graf <graf@movingtarget.de>
+# Copyright  (c)  2005 - 2010  Bernhard Graf <graf@movingtarget.de>
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
@@ -10,7 +10,7 @@
 %define initname	%{name}-init
 %define version		0.97
 %define initversion	%{version}
-%define release		3
+%define release		4
 # %define _unpackaged_files_terminate_build 0
 %define	cgidir		/srv/www/cgi-bin
 %define phpdir		/srv/www/php
@@ -24,6 +24,7 @@ License:	GPL
 Group:		Productivity/Networking/Email/Utilities
 Source:		%{name}-%{version}.tar.gz
 Source1:	%{initname}-%{initversion}.tar.bz2
+Patch:		%{name}-%{version}-strcasestr.patch
 Buildroot:	%{_tmppath}/%{name}-%{version}-%(id -u -n)
 PreReq:		%insserv_prereq %fillup_prereq /bin/cat /bin/sed /bin/touch
 BuildRequires:	coreutils filesystem fileutils fillup make c_compiler libtool
@@ -108,6 +109,7 @@ Courier authentication module for VMailMgr.
 
 %prep
 %setup -q -a1
+%patch
 %{configure}
 
 %build
@@ -286,6 +288,8 @@ fi
 /usr/lib/courier-authlib/*
 
 %changelog
+* Thu Apr 29 2010 Bernhard Graf <graf@movingtarget.de> 0.97-4
+- make it build with glibc 2.10+
 * Thu Mar 06 2008 Bernhard Graf <graf@movingtarget.de>
 - fixed autoresponder facility (/etc/vmailmgr must be world-readable)
 * Tue Mar 04 2008 Bernhard Graf <graf@movingtarget.de>

@@ -1,0 +1,18 @@
+--- authenticate/checkvpw.cc
++++ authenticate/checkvpw.cc
+@@ -105,15 +105,6 @@
+   return new auth_data(name, pass, stamp);
+ }
+ 
+-char* strcasestr(const char* haystack, const char* needle)
+-{
+-  for(size_t hlength = strlen(haystack), nlength = strlen(needle);
+-      hlength >= nlength; hlength--, haystack++)
+-    if(!strncasecmp(haystack, needle, nlength))
+-      return (char*)haystack;
+-  return 0;
+-}
+-
+ unsigned find_maildir(int argc, const char* args[])
+ {
+   for(int arg = 0; arg < argc; arg++) {
