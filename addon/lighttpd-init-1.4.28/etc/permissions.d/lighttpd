@@ -1,0 +1,8 @@
+/etc/lighttpd/conf.d		root.www	0750
+/var/lib/lighttpd		wwwrun.www	0751
+/var/lib/lighttpd/sockets	wwwrun.www	0751
+/var/cache/lighttpd		wwwrun.www	0751
+/var/log/www/lighttpd		nobody.www	0755
+/var/log/www/lighttpd/start	nobody.nobody	0755
+/var/log/www/lighttpd/accesss	wwwrun.www	0750
+/var/log/www/lighttpd/error	wwwrun.www	0750

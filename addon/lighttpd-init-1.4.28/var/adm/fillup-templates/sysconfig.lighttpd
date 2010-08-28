@@ -1,0 +1,280 @@
+## Path:        Network/WWW/lighttpd
+## Description: Basic configuration for lighttpd
+## Type:        yesno
+## Default:     "yes"
+#
+# Enable lighttpd auto configuration
+#
+# Set this entry to "no" to diable auto configuration from /etc/sysconfig.
+#
+ENABLE_AUTOCONFIG_LIGHTTPD="yes"
+
+## Type:        string
+## Default:     "/etc/lighttpd/conf/lighttpd.conf"
+#
+# The name of the configuration file. This default is also used, when
+# nothing is set here.
+#
+LIGHTTPD_CONF="/etc/lighttpd/lighttpd.conf"
+
+## Type:	integer
+## Default:	"50000000"
+#
+# LIGHTTPD_LIMIT sets the maximum size of the data segment of the server
+# process.  The value of LIGHTTPD_LIMIT is simply passed to the "softlimit -d"
+# command, which sets the upper limit on the size of the data segment of
+# the server process, in bytes.  The default value of 50000000 sets a very
+# generous limit, which should be more than plenty for anyone.
+#
+# This feature is used as an additional safety check that should stop
+# any potential denial-of-service attacks that exploit any kind of
+# a memory leak to exhaust all the available memory on the server.
+#
+LIGHTTPD_LIMIT="50000000"
+
+## Type:        string
+## Default:     ""
+#
+# Here you can name modules, separated by spaces, that should be loaded.
+# Loads mod_access and mod_accesslog if none set.
+# Three default modules are loaded automatically:
+#   "mod_indexfile", "mod_dirlisting", "mod_staticfile"
+# you dont have to include those modules in your list.
+#
+# NOTE: The order of modules is important. The modules are executed in the
+# order as they are specified. Loading mod_auth AFTER mod_fastcgi might
+# disable authentication for fastcgi backends (if check-local is disabled).
+# As auth should be done first, move it before all executing modules (like
+# proxy, fastcgi, scgi and cgi).
+# Rewrites, redirects and access should be first, followed by auth and the
+# docroot plugins.
+# Afterwards the external handlers like fastcgi, cgi, scgi and proxy and at
+# the bottom the post-processing plugins like mod_accesslog.
+#
+LIGHTTPD_MODULES=""
+
+## Type:        yesno
+## Default:     "yes"
+#
+# Wether to enable IPv6
+#
+LIGHTTPD_USE_IPV6="yes"
+
+## Type:        ip
+## Default:     ""
+#
+# IP address lighttpd listens to. If none is given, listen on all IPs.
+#
+LIGHTTPD_ADDRESS=""
+
+## Type:        integer
+## Default:     80
+#
+# Port number lighttpd listens to.
+# 
+#
+LIGHTTPD_PORT="80"
+
+## Type:        string
+## Default:     "wwwrun"
+#
+# The name of the user under which lighttpd is running.
+#
+LIGHTTPD_USER="wwwrun"
+
+## Type:        string
+## Default:     "www"
+#
+# The name of the group under which lighttpd is running.
+#
+LIGHTTPD_GROUP="www"
+
+## Type:        list(select,poll,linux-sysepoll)
+## Default:     "linux-sysepoll"
+#
+# The event-handler (read the performance section in the manual).
+# Possible values are select, poll, linux-sysepoll.
+# linux-sysepoll is recommended on kernel 2.6.
+# Don't change unless you really know what you are doing!
+#
+LIGHTTPD_EVENT_HANDLER="linux-sysepoll"
+
+## Type:        list(linux-sendfile,writev)
+## Default:     "linux-sendfile"
+#
+# The basic network interface for all platforms at the syscalls read()
+# and write(). Every modern OS provides its own syscall to help network
+# servers transfer files as fast as possible.
+#
+# linux-sendfile - is recommended for small files.
+# writev         - is recommended for sending many large files
+#
+# Don't change unless you really know what you are doing!
+#
+LIGHTTPD_NETWORK_BACKEND="linux-sendfile"
+
+## Type:        integer
+## Default:     "0"
+#
+# As lighttpd is a single-threaded server, its main resource limit is
+# the number of file descriptors, which is set to 1024 by default (on
+# most systems).
+#
+# If you are running a high-traffic site you might want to increase this
+# limit by setting LIGHTTPD_MAX_FDS to something higher.
+# A value of 2048 is a good default for busy servers.
+#
+# The default setting here is "0" which means, don't change the default.
+#
+LIGHTTPD_MAX_FDS="0"
+
+## Type:        list(disable,simple,fam)
+## Default:     "disable"
+#
+# lighttpd can utilize FAM/Gamin to cache stat call.
+#
+LIGHTTPD_STAT_CACHE_ENGINE="disable"
+
+## Type:        integer
+## Default:     "0"
+#
+# max-connections == max-fds/2 (maybe /3)
+# means the other file handles are used for fastcgi/files
+#
+# The default setting here is "0" which means, go with the default.
+#
+LIGHTTPD_MAX_CONNECTIONS="0"
+
+## Type:        integer
+## Default:     "5"
+#
+# How many seconds to keep a keep-alive connection open,
+# until we consider it idle.
+#
+LIGHTTPD_MAX_KEEP_ALIVE_IDLE="5"
+
+## Type:        integer
+## Default:     "16"
+#
+# How many keep-alive requests until closing the connection.
+#
+# The default setting here is "0" which means, go with the default 16.
+#
+LIGHTTPD_MAX_KEEP_ALIVE_REQUESTS="16"
+
+## Type:        integer
+## Default:     "0"
+#
+# Maximum size of a request in kilobytes.
+# By default it is unlimited (0).
+#
+# Uploads to your server can't be larger than this value.
+#
+LIGHTTPD_MAX_REQUEST_SIZE="0"
+
+## Type:        integer
+## Default:     "60"
+#
+# Time to read from a socket before we consider it idle.
+#
+LIGHTTPD_MAX_READ_IDLE="60"
+
+## Type:        integer
+## Default:     "360"
+#
+# Time to write to a socket before we consider it idle.
+#
+LIGHTTPD_MAX_WRITE_IDLE="360"
+
+## Type:        integer
+## Default:     "0"
+#
+# traffic shaping per server.
+#
+# 0 means no limitation.
+#
+LIGHTTPD_SERVER_KBYTES_PER_SECOND="0"
+
+## Type:        integer
+## Default:     "0"
+#
+# traffic shaping per connection.
+#
+# 0 means no limitation.
+#
+LIGHTTPD_CONNECTION_KBYTES_PER_SECOND="0"
+
+## Type:        string
+## Default:     ""
+#
+# Path name on disk of document root.
+# Defaults to "/srv/www/htdocs" if none is given.
+#
+LIGHTTPD_DOCUMENT_ROOT=""
+
+## Type:        yesno
+## Default:     "yes"
+#
+# Wether to follow symlinks
+#
+LIGHTTPD_FOLLOW_SYMLINK="yes"
+
+## Type:        string
+## Default:     ""
+#
+# How lighttpd identifies itself in HTTP header.
+# If none set, the name is "lighttpd"
+#
+LIGHTTPD_TAG=""
+
+## Type:        string
+## Default:     ""
+#
+# Files to check for if .../ is requested, separated by space.
+#
+LIGHTTPD_INDEX_FILES="index.html index.htm"
+
+## Type:        string
+## Default:     ".php .pl .fcgi .scgi"
+#
+# Space separated list of extensions of files that should not be handled
+# via static-file transfer.
+#
+#  .php, .pl, .fcgi are most often handled by mod_fastcgi or mod_cgi
+#
+LIGHTTPD_STATIC_EXCLUDE_EXTENSIONS=".php .pl .fcgi .scgi"
+
+## Type:        string
+## Default:     "/var/tmp"
+#
+# Space separated list of upload directories.
+# If empty the default (/var/tmp) is used.
+#
+LIGHTTPD_UPLOAD_DIRS="/var/tmp"
+
+## Type:        string
+## Default:     "nobody"
+#
+# The name of the user under which multilog is running.
+#
+LIGHTTPD_LOGUSER="nobody"
+
+## Type:        integer
+## Default:     99999
+#
+# sets the maximum file size for subsequent dir actions. multilog will
+# decide that current is big enough if current has size bytes. (multilog
+# will also decide that current is big enough if it sees a newline within
+# 2000 bytes of the maximum file size; it tries to finish log files at line
+# boundaries.) size must be between 4096 and 16777215.
+#
+LIGHTTPD_LOGSIZE="99999"
+
+## Type:        integer
+## Default:     10
+#
+# sets the number of log files for subsequent dir actions. After renaming
+# current, if multilog sees num or more old log files, it removes the old
+# log file with the smallest timestamp. num must be at least 2.
+#
+LIGHTTPD_LOGNUM="10"

@@ -1,7 +1,7 @@
 #
-# spec file for package lighttpd (Version 1.4.24)
+# spec file for package lighttpd (Version 1.4.28)
 #
-# Copyright  (c)  2006 - 2009  Bernhard Graf <graf@movingtarget.de>
+# Copyright  (c)  2006 - 2010  Bernhard Graf <graf@movingtarget.de>
 # This file and all modifications and additions to the pristine
 # package are under the same license as the package itself.
 #
@@ -10,7 +10,7 @@
 %define pkg_user	wwwrun
 %define pkg_group	www
 %define pkg_home	/var/lib/%{pkg_name}
-%define version		1.4.24
+%define version		1.4.28
 %define release         0
 %define initdir		%{_sysconfdir}/init.d
 
@@ -378,9 +378,9 @@ fi
 %files
 %define confattr %attr(640,root,%{pkg_group}) %config(noreplace) %verify(not md5 size mtime)
 %defattr(-,root,root)
-%doc doc/lighttpd.conf doc/lighttpd.user README INSTALL NEWS COPYING AUTHORS
+%doc doc/config README INSTALL NEWS COPYING AUTHORS
 %doc doc/*.dot
-%doc doc/spawn-php.sh
+%doc doc/scripts/spawn-php.sh
 %doc doc/accesslog.txt
 %doc doc/access.txt
 %doc doc/alias.txt
@@ -489,7 +489,7 @@ fi
 %files mod_rrdtool
 %defattr(-,root,root,-)
 %doc doc/rrdtool.txt
-%doc doc/rrdtool-graph.sh
+%doc doc/scripts/rrdtool-graph.sh
 %attr(640,root,%{pkg_group}) %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/%{pkg_name}/conf.d/rrdtool.conf
 %{_libdir}/%{pkg_name}/mod_rrdtool.so
 
@@ -532,6 +532,12 @@ fi
 %{_libdir}/%{pkg_name}/mod_webdav.so
 
 %changelog
+* Sat Aug 28 2010 - Bernhard Graf <graf@movingtarget.de> 1.4.28-0
+- upgraded to 1.4.28
+
+* Tue Apr 27 2010 - Bernhard Graf <graf@movingtarget.de> 1.4.26-0
+- upgraded to 1.4.26
+
 * Tue Nov 03 2009 - Bernhard Graf <graf@movingtarget.de> 1.4.24-0
 - upgraded to 1.4.24
 
